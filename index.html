@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India Map Visualizer Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/states-of-india/assets/index-V3FuVTTU.js"></script>
+  <link rel="stylesheet" crossorigin href="/states-of-india/assets/index-CMgykgsG.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <i data-lucide="map-pin"></i>
+            IndiaMap Visualizer
+        </div>
+        <div class="header-actions">
+            <button id="download-btn" class="btn">
+                <i data-lucide="download"></i>
+                Export Visualization
+            </button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="file-text" size="14"></i> Data Import</h3>
+                <div class="control-group">
+                    <div class="input-field">
+                        <label>Upload CSV</label>
+                        <input type="file" id="csv-upload" accept=".csv" style="font-size: 0.7rem;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="settings" size="14"></i> Map & Title Settings</h3>
+                <div class="control-group">
+                    <div class="input-field">
+                        <label>Main Title (use \n for subtitle)</label>
+                        <textarea id="map-title-input" rows="2"
+                            style="width:100%; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.25rem;">States of India</textarea>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Title Size</label>
+                            <input type="number" id="title-size" step="0.1" value="2.5" style="width: 50px;">
+                        </div>
+                        <div class="input-field">
+                            <label>Color</label>
+                            <input type="color" id="title-color" value="#c53030">
+                        </div>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Title X</label>
+                            <input type="number" id="title-x" value="0" style="width: 50px;">
+                        </div>
+                        <div class="input-field">
+                            <label>Title Y</label>
+                            <input type="number" id="title-y" value="0" style="width: 50px;">
+                        </div>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Map X</label>
+                            <input type="number" id="map-x" value="0" style="width: 50px;">
+                        </div>
+                        <div class="input-field">
+                            <label>Map Y</label>
+                            <input type="number" id="map-y" value="0" style="width: 50px;">
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label>Map Scale (Size)</label>
+                        <div class="range-input">
+                            <input type="range" id="map-scale" min="400" max="3000" value="1200">
+                            <span id="scale-val">1200</span>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="show-legend"> Show Scale Bar
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="palette" size="14"></i> Heat Map Palette</h3>
+                <div class="control-group">
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Low</label>
+                            <input type="color" id="color-start" value="#fff5f5">
+                        </div>
+                        <div class="input-field">
+                            <label>High</label>
+                            <input type="color" id="color-end" value="#800000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="type" size="14"></i> Text Customization</h3>
+                <div class="control-group">
+                    <div class="input-field">
+                        <label>Font Family</label>
+                        <select id="label-font">
+                            <option value="Outfit">Outfit</option>
+                            <option value="Serif">Serif</option>
+                            <option value="Arial">Arial</option>
+                        </select>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Font Color</label>
+                            <input type="color" id="label-color" value="#333333">
+                        </div>
+                        <div class="input-field">
+                            <label>Lines Color</label>
+                            <input type="color" id="line-color" value="#94a3b8">
+                        </div>
+                    </div>
+                    <div class="input-field" style="flex-direction: row; gap: 1rem;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="bold-labels" checked> Bold
+                        </label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="show-values" checked> Values
+                        </label>
+                    </div>
+                    <div class="input-field">
+                        <label>State Font Size</label>
+                        <div class="range-input">
+                            <input type="range" id="label-size" min="6" max="30" value="11">
+                            <span id="size-val">11px</span>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label>Value Font Size</label>
+                        <div class="range-input">
+                            <input type="range" id="value-size-global" min="6" max="30" value="10">
+                            <span id="vsize-val">10px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h3 class="section-title" style="margin: 0;">State Table</h3>
+                    <button id="clear-colors-btn" class="btn btn-secondary"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.65rem;">Reset Layout</button>
+                </div>
+                <div class="data-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th title="Value">Val</th>
+                                <th title="Name Size">SzN</th>
+                                <th title="Name Color">ClN</th>
+                                <th title="Value Size" style="border-left:1px solid #ddd;">SzV</th>
+                                <th title="Value Color">ClV</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </aside>
+
+        <section class="viewer">
+            <div id="map-export-area">
+                <div id="title-container" style="position: absolute; width: 100%; pointer-events: none; z-index: 10;">
+                    <h1 id="map-title-display"></h1>
+                </div>
+                <div id="map-container">
+                    <svg id="india-map"></svg>
+                </div>
+                <div class="legend" id="map-legend" style="display: none;">
+                    <div id="legend-gradient" class="color-bar"></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
+                        <span id="legend-min">0</span>
+                        <span id="legend-max">100</span>
+                    </div>
+                </div>
+            </div>
+            <div class="tooltip" id="tooltip"></div>
+        </section>
+    </main>
+
+</body>
+
+</html>
