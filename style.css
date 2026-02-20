@@ -250,14 +250,20 @@ tr:hover {
 }
 
 #map-title-display {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    font-size: 3rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 2rem;
+    font-size: 2.2rem;
     font-weight: 800;
-    color: #1e293b;
-    width: 100%;
-    text-align: center;
-    line-height: 1.2;
+    color: #c53030;
+    white-space: pre-wrap;
+    text-align: left;
+    line-height: 1.1;
+    z-index: 100;
+    pointer-events: all;
+    cursor: move;
 }
 
 #india-map {
@@ -274,8 +280,8 @@ tr:hover {
 }
 
 .state-path {
-    stroke: #ffffff;
-    stroke-width: 0.5;
+    stroke: #000;
+    stroke-width: 0.3;
     transition: fill 0.2s;
     cursor: pointer;
 }

@@ -19,6 +19,7 @@
     "html2canvas": "^1.4.1",
     "lucide": "^0.575.0",
     "lucide-static": "^0.575.0",
+    "puppeteer": "^24.37.5",
     "vite": "^7.3.1"
   },
   "devDependencies": {

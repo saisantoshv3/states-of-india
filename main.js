@@ -5,64 +5,27 @@ import { createIcons, MapPin, Download, Settings, Palette, Type, FileText, Mouse
 // Global Data - Exact names from india_states.json for perfect mapping
 // Values updated based on user provided table
 let stateData = [
-    { id: "JK", name: "Jammu & Kashmir", value: 2.78, dx: -80, dy: -40, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 40, cdy: -10 },
-    { id: "LA", name: "Ladakh", value: 0.03, dx: 60, dy: -40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -30, cdy: -10 },
-    { id: "PB", name: "Punjab", value: 2.77, dx: -100, dy: -10, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 50, cdy: 0 },
-    { id: "UP", name: "Uttar Pradesh", value: 24.11, dx: 10, dy: -10, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 0, cdy: -10 },
-    { id: "RJ", name: "Rajasthan", value: 6.85, dx: -90, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 45, cdy: 10 },
-    { id: "GJ", name: "Gujarat", value: 6.04, dx: -110, dy: 10, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 55, cdy: 0 },
-    { id: "MP", name: "Madhya Pradesh", value: 7.26, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 0, cdy: -20 },
-    { id: "MH", name: "Maharashtra", value: 11.24, dx: -90, dy: 40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 45, cdy: 0 },
-    { id: "KA", name: "Karnataka", value: 6.11, dx: -90, dy: 20, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 45, cdy: -10 },
-    { id: "KL", name: "Kerala", value: 3.45, dx: -80, dy: 40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 40, cdy: 0 },
-    { id: "TN", name: "Tamil Nadu", value: 7.21, dx: 40, dy: 60, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -20, cdy: -20 },
-    { id: "AP", name: "Andhra Pradesh", value: 4.96, dx: 110, dy: 30, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -55, cdy: 10 },
-    { id: "TG", name: "Telangana", value: 3.5, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: -20 },
-    { id: "OR", name: "Odisha", value: 4.2, dx: 100, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -50, cdy: 0 },
-    { id: "CT", name: "Chhattisgarh", value: 2.94, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: -20 },
-    { id: "JH", name: "Jharkhand", value: 3.3, dx: 0, dy: 50, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: -25 },
-    { id: "WB", name: "West Bengal", value: 9.13, dx: 90, dy: 50, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -45, cdy: -15 },
-    { id: "BR", name: "Bihar", value: 10.41, dx: 60, dy: -30, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -30, cdy: 10 },
-    { id: "AS", name: "Assam", value: 3.12, dx: 100, dy: -20, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -50, cdy: 10 },
-    { id: "AR", name: "Arunachal Pradesh", value: 0.14, dx: 130, dy: -60, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -65, cdy: 20 },
-    { id: "MN", name: "Manipur", value: 0.29, dx: 120, dy: 20, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -60, cdy: -10 },
-    { id: "TR", name: "Tripura", value: 0.37, dx: -60, dy: 60, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 30, cdy: -30 },
-    { id: "MZ", name: "Mizoram", value: 0.13, dx: 80, dy: 70, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -40, cdy: -35 },
-    { id: "ML", name: "Meghalaya", value: 0.32, dx: -80, dy: 20, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 40, cdy: -10 },
-    { id: "NL", name: "Nagaland", value: 0.2, dx: 100, dy: -10, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -50, cdy: 5 },
-    { id: "SK", name: "Sikkim", value: 0.06, dx: -20, dy: -80, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 10, cdy: 40 },
-    { id: "HP", name: "Himachal Pradesh", value: 0.69, dx: 70, dy: -40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -35, cdy: 20 },
-    { id: "UT", name: "Uttarakhand", value: 1.01, dx: 80, dy: -10, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -40, cdy: 5 },
-    { id: "HR", name: "Haryana", value: 2.78, dx: -100, dy: 50, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 50, cdy: -25 },
-    { id: "DL", name: "NCT of Delhi", value: 0.99, dx: 130, dy: 40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -65, cdy: -20 },
-    { id: "DN", name: "Dadra and Nagar Haveli and Daman and Diu", value: 3.5, dx: -140, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 9, vSize: 8, labelColor: null, valueColor: null, cdx: 70, cdy: 0 },
-    { id: "PY", name: "Puducherry", value: 0.14, dx: 90, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -45, cdy: 0 },
-    { id: "GA", name: "Goa", value: 0.15, dx: -90, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 45, cdy: 0 },
-    { id: "AN", name: "Andaman & Nicobar Island", value: 0.42, dx: 80, dy: -20, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -40, cdy: 10 },
-    { id: "LD", name: "Lakshadweep", value: 0.01, dx: -90, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 45, cdy: 0 },
-    { id: "CH", name: "Chandigarh", value: 0.11, dx: 50, dy: 20, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -25, cdy: -10 }
 ];
 
 const config = {
     scale: 1050,
     colorStart: "#fff5f5",
     colorEnd: "#800000",
-    labelSize: 11,
-    valueSize: 10,
-    labelColor: "#333333",
-    labelFont: "Outfit",
+    labelSize: 9,
+    valueSize: 9,
+    labelColor: "#333",
+    labelFont: "Times New Roman",
     labelAngle: 0,
-    lineColor: "#ccc",
+    lineColor: "#333",
     showValues: true,
-    showLegend: false,
-    boldLabels: true,
+    showLegend: false, boldLabels: true,
     selectedState: null,
-    titleX: 0,
-    titleY: 0,
-    titleSize: 2.5,
+    titleX: -240,
+    titleY: -350,
+    titleSize: 2.2,
     titleColor: "#c53030",
     mapX: 0,
-    mapY: 0
+    mapY: 10
 };
 
 let geoData = null;
@@ -96,7 +59,7 @@ async function init() {
             const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
 
             // 1. Direct ID match
-            let match = stateData.find(s => cleanName === s.id.toLowerCase());
+            let match = stateData.find(s => cleanName === s.id.toLowerCase().replace(/[^a-z0-9]/g, ''));
 
             // 2. Exact name match
             if (!match) match = stateData.find(s => cleanName === s.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
@@ -108,9 +71,9 @@ async function init() {
                 }
             }
 
-            // 4. Broader fuzzy match (only for longer names to avoid ID collision like 'AN')
+            // 4. Broader fuzzy match
             if (!match && cleanName.length > 3) {
-                match = stateData.find(s => fuzzyMatch(s.name, name));
+                match = stateData.find(s => fuzzyMatch(s.id, name) || fuzzyMatch(s.name, name));
             }
 
             if (match) f.properties._mapped_id = match.id;
@@ -152,7 +115,7 @@ function updateMap() {
 
     const states = gStates.selectAll(".state-path").data(geoData.features);
     states.enter().append("path").attr("class", "state-path")
-        .attr("stroke", "#fff").attr("stroke-width", 0.5)
+        .attr("stroke", "#000").attr("stroke-width", 1.0)
         .on("click", (event, d) => {
             const data = stateData.find(s => s.id === d.properties._mapped_id);
             if (data) {
@@ -162,6 +125,8 @@ function updateMap() {
             }
         })
         .merge(states).transition().duration(200).attr("d", path)
+        .attr("stroke", "#000")
+        .attr("stroke-width", 1.0)
         .attr("fill", d => {
             const data = stateData.find(s => s.id === d.properties._mapped_id);
             return data ? colorScale(data.value) : "#f1f5f9";
@@ -210,7 +175,7 @@ function renderLabels() {
         .attr("stroke", config.lineColor)
         .attr("fill", "none").attr("stroke-dasharray", "2,2")
         .attr("d", d => {
-            if (!d.dx || (Math.abs(d.dx) < 15 && Math.abs(d.dy) < 15)) return "";
+            if (!d.origX || !d.dx || (Math.abs(d.dx) < 15 && Math.abs(d.dy) < 15)) return "";
             const cx = d.origX + (d.cdx || 0);
             const cy = d.y + (d.cdy || 0);
             return `M${d.origX},${d.origY} Q${cx},${cy} ${d.x},${d.y}`;
@@ -239,7 +204,10 @@ function renderLabels() {
     labelsEnter.append("text").attr("class", "label-value");
 
     const labelsMerge = labelsEnter.merge(labels);
-    labelsMerge.attr("transform", d => `translate(${d.x},${d.y}) rotate(${d.angle || config.labelAngle})`);
+    labelsMerge.attr("transform", d => {
+        if (isNaN(d.x) || isNaN(d.y)) return "translate(0,0)";
+        return `translate(${d.x},${d.y}) rotate(${d.angle || config.labelAngle})`;
+    });
 
     labelsMerge.select(".label-name")
         .text(d => d.name)
@@ -303,35 +271,41 @@ function handleResize() {
 
 function setupEventListeners() {
     window.addEventListener('resize', handleResize);
-    svg.on("click", () => { config.selectedState = null; renderLabels(); });
+    if (svg) svg.on("click", () => { config.selectedState = null; renderLabels(); });
 
-    document.getElementById('map-title-input').addEventListener('input', updateMap);
+    const titleInput = document.getElementById('map-title-input');
+    if (titleInput) titleInput.addEventListener('input', updateMap);
 
     ['title-x', 'title-y', 'title-size', 'map-x', 'map-y'].forEach(id => {
-        document.getElementById(id).addEventListener('input', e => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', e => {
             const key = id.replace('title-', 'title').replace('map-', 'map').replace('-size', 'Size').replace('-x', 'X').replace('-y', 'Y');
             config[key] = parseFloat(e.target.value);
             updateMap();
         });
     });
 
-    document.getElementById('title-color').addEventListener('input', e => {
+    const titleColorEl = document.getElementById('title-color');
+    if (titleColorEl) titleColorEl.addEventListener('input', e => {
         config.titleColor = e.target.value;
         updateMap();
     });
 
-    document.getElementById('map-scale').addEventListener('input', e => {
+    const mapScaleEl = document.getElementById('map-scale');
+    if (mapScaleEl) mapScaleEl.addEventListener('input', e => {
         config.scale = parseInt(e.target.value);
         document.getElementById('scale-val').innerText = config.scale;
         updateMap();
     });
 
-    document.getElementById('show-legend').addEventListener('change', e => {
+    const showLegendEl = document.getElementById('show-legend');
+    if (showLegendEl) showLegendEl.addEventListener('change', e => {
         config.showLegend = e.target.checked;
         updateMap();
     });
 
-    document.getElementById('bold-labels').addEventListener('change', e => {
+    const boldLabelsEl = document.getElementById('bold-labels');
+    if (boldLabelsEl) boldLabelsEl.addEventListener('change', e => {
         config.boldLabels = e.target.checked;
         updateMap();
     });
@@ -344,45 +318,71 @@ function setupEventListeners() {
         });
     });
 
-    document.getElementById('label-size').addEventListener('input', e => {
+    const labelSizeEl = document.getElementById('label-size');
+    if (labelSizeEl) labelSizeEl.addEventListener('input', e => {
         config.labelSize = parseInt(e.target.value);
         document.getElementById('size-val').innerText = config.labelSize + "px"; updateMap();
     });
 
-    document.getElementById('value-size-global').addEventListener('input', e => {
+    const valSizeEl = document.getElementById('value-size-global');
+    if (valSizeEl) valSizeEl.addEventListener('input', e => {
         config.valueSize = parseInt(e.target.value);
         document.getElementById('vsize-val').innerText = config.valueSize + "px"; updateMap();
     });
 
-    document.getElementById('label-angle').addEventListener('input', e => {
+    const labelAngleEl = document.getElementById('label-angle');
+    if (labelAngleEl) labelAngleEl.addEventListener('input', e => {
         config.labelAngle = parseInt(e.target.value);
         document.getElementById('angle-val').innerText = config.labelAngle + "°"; updateMap();
     });
 
-    document.getElementById('label-font').addEventListener('change', e => {
+    const labelFontEl = document.getElementById('label-font');
+    if (labelFontEl) labelFontEl.addEventListener('change', e => {
         config.labelFont = e.target.value; updateMap();
     });
 
-    document.getElementById('show-values').addEventListener('change', e => {
+    const showValuesEl = document.getElementById('show-values');
+    if (showValuesEl) showValuesEl.addEventListener('change', e => {
         config.showValues = e.target.checked; updateMap();
     });
 
-    document.getElementById('download-btn').addEventListener('click', () => {
+    const downloadBtn = document.getElementById('download-btn');
+    if (downloadBtn) downloadBtn.addEventListener('click', () => {
         const area = document.getElementById('map-export-area');
+        if (!area) return;
         gHandles.style("visibility", "hidden");
-        html2canvas(area, { backgroundColor: '#ffffff', scale: 2, logging: false }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `india-map-${Date.now()}.png`;
-            link.href = canvas.toDataURL(); link.click();
-            gHandles.style("visibility", "visible");
-        });
+
+        setTimeout(() => {
+            html2canvas(area, {
+                backgroundColor: '#ffffff',
+                scale: 3,
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    const link = document.createElement('a');
+                    link.download = `india-map-${Date.now()}.png`;
+                    link.href = URL.createObjectURL(blob);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    URL.revokeObjectURL(link.href);
+                    gHandles.style("visibility", "visible");
+                }, 'image/png');
+            }).catch(err => {
+                console.error("Export failed:", err);
+                gHandles.style("visibility", "visible");
+            });
+        }, 150);
     });
 
-    document.getElementById('clear-colors-btn').addEventListener('click', () => {
-        stateData.forEach(s => { s.dx = 0; s.dy = 0; s.angle = 0; s.vdx = 0; s.vdy = 15; s.cdx = 0; s.cdy = -20; });
-        config.mapX = 0; config.mapY = 0; config.titleX = 0; config.titleY = 0;
+    const resetBtn = document.getElementById('clear-colors-btn');
+    if (resetBtn) resetBtn.addEventListener('click', () => {
+        stateData.forEach(s => { s.dx = 0; s.dy = 0; s.angle = 0; s.vdx = 0; s.vdy = 15; s.cdx = 0; s.cdy = -20; s.labelColor = null; s.valueColor = null; });
+        config.mapX = 0; config.mapY = 0; config.titleX = -240; config.titleY = -350;
         document.getElementById('map-x').value = 0; document.getElementById('map-y').value = 0;
-        document.getElementById('title-x').value = 0; document.getElementById('title-y').value = 0;
+        document.getElementById('title-x').value = -240; document.getElementById('title-y').value = -350;
         renderTable(); updateMap();
     });
 }
