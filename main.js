@@ -44,7 +44,7 @@ let stateData = [
 ];
 
 const config = {
-    scale: 1200,
+    scale: 1410,
     colorStart: "#7ad4b1ff",
     colorEnd: "#177a73ff",
     labelSize: 9,
@@ -57,7 +57,7 @@ const config = {
     showLegend: true, legendDirection: "horizontal", legendX: 380, legendY: 650,
     boldLabels: false,
     selectedState: null,
-    titleX: 100,
+    titleX: 450,
     titleY: 20,
     titleSize: 2.5,
     titleColor: "#000000",
@@ -587,9 +587,9 @@ function setupEventListeners() {
     const resetBtn = document.getElementById('clear-colors-btn');
     if (resetBtn) resetBtn.addEventListener('click', () => {
         stateData.forEach(s => { s.dx = 0; s.dy = 0; s.angle = 0; s.vdx = 0; s.vdy = 15; s.cdx = 0; s.cdy = -20; s.labelColor = null; s.valueColor = null; });
-        config.mapX = 0; config.mapY = 0; config.titleX = 100; config.titleY = 20;
+        config.mapX = 0; config.mapY = 0; config.titleX = 450; config.titleY = 20;
         document.getElementById('map-x').value = 0; document.getElementById('map-y').value = 0;
-        document.getElementById('title-x').value = 100; document.getElementById('title-y').value = 20;
+        document.getElementById('title-x').value = 450; document.getElementById('title-y').value = 20;
         renderTable(); updateMap();
     });
 

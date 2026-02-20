@@ -281,7 +281,7 @@ td {
     font-weight: 500;
     color: #c53030;
     white-space: pre-wrap;
-    text-align: left;
+    text-align: right;
     line-height: 1.1;
     z-index: 100;
     pointer-events: all;
