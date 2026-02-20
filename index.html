@@ -25,7 +25,7 @@
         </div>
     </header>
 
-    <main class="main-container">
+    <main class="main-container" style="flex-direction: row-reverse;">
         <aside class="sidebar">
             <div class="sidebar-section">
                 <h3 class="section-title"><i data-lucide="file-text" size="14"></i> Data Import</h3>
@@ -82,10 +82,38 @@
                             <span id="scale-val">1200</span>
                         </div>
                     </div>
-                    <div class="input-field">
+                    <div class="input-field" style="display:none;">
                         <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
-                            <input type="checkbox" id="show-legend"> Show Scale Bar
+                            <input type="checkbox" id="show-legend-old"> Show Scale Bar
                         </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="layers" size="14"></i> Scale Bar / Legend</h3>
+                <div class="control-group">
+                    <div class="input-field" style="flex-direction:row; gap:1rem; align-items:center;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="show-legend" checked> Show Legend
+                        </label>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <label style="font-size:0.7rem; margin:0;">Dir:</label>
+                            <select id="legend-direction" style="font-size:0.7rem; padding:0.2rem;">
+                                <option value="horizontal">Horizontal</option>
+                                <option value="vertical">Vertical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Legend X</label>
+                            <input type="number" id="legend-x" value="20" style="width: 50px;">
+                        </div>
+                        <div class="input-field">
+                            <label>Legend Y</label>
+                            <input type="number" id="legend-y" value="20" style="width: 50px;">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,8 +141,9 @@
                         <label>Font Family</label>
                         <select id="label-font">
                             <option value="Outfit">Outfit</option>
-                            <option value="Serif">Serif</option>
+                            <option value="Times New Roman">Times New Roman</option>
                             <option value="Arial">Arial</option>
+                            <option value="Serif">Serif</option>
                         </select>
                     </div>
                     <div class="color-pickers">
@@ -162,8 +191,14 @@
             <div class="sidebar-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                     <h3 class="section-title" style="margin: 0;">State Table</h3>
-                    <button id="clear-colors-btn" class="btn btn-secondary"
-                        style="padding: 0.25rem 0.5rem; font-size: 0.65rem;">Reset Layout</button>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button id="undo-btn" class="btn btn-secondary"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.65rem;" disabled>
+                            <i data-lucide="undo" style="width:12px; height:12px;"></i> Undo
+                        </button>
+                        <button id="clear-colors-btn" class="btn btn-secondary"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.65rem;">Reset Layout</button>
+                    </div>
                 </div>
                 <div class="data-table-container">
                     <table>
@@ -191,12 +226,8 @@
                 <div id="map-container">
                     <svg id="india-map"></svg>
                 </div>
-                <div class="legend" id="map-legend" style="display: none;">
-                    <div id="legend-gradient" class="color-bar"></div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
-                        <span id="legend-min">0</span>
-                        <span id="legend-max">100</span>
-                    </div>
+                <div class="legend" id="map-legend"
+                    style="display: none; position: absolute; pointer-events: all; cursor: move; z-index: 20;">
                 </div>
             </div>
             <div class="tooltip" id="tooltip"></div>
