@@ -78,7 +78,6 @@ function saveState() {
 
 function undoState() {
     if (stateHistory.length === 0) return;
-    saveState(); // Save current before undo to allow redo later (optional)
     const last = stateHistory.pop();
     stateData = last.stateData;
     Object.assign(config, last.config);
@@ -141,14 +140,6 @@ async function init() {
             const geoId = f.properties.ID || f.properties.ST_ID?.replace('IN-', '');
             const cleanName = name ? name.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
 
-<<<<<<< HEAD
-            let match = stateData.find(s => s.id === geoId);
-            if (!match) match = stateData.find(s =>
-                (s.fullName && cleanName === s.fullName.toLowerCase().replace(/[^a-z0-9]/g, '')) ||
-                cleanName === s.name.toLowerCase().replace(/[^a-z0-9]/g, '')
-            );
-
-=======
             // 1. Direct ID match (highest priority from GeoJSON ID)
             let match = stateData.find(s => s.id === geoId);
 
@@ -159,17 +150,13 @@ async function init() {
             );
 
             // 3. Special cases for merged UTs or alternative IDs
->>>>>>> 1c689d9 (Corrected state mapping, fixed export, updated UI to Times New Roman, and refined table styling)
             if (!match) {
                 if (geoId === 'DD' || cleanName.includes('dadara') || cleanName.includes('havelli') || cleanName.includes('daman') || cleanName.includes('diu')) {
                     match = stateData.find(s => s.id === "DN");
                 }
             }
 
-<<<<<<< HEAD
-=======
             // 4. Broader fuzzy match
->>>>>>> 1c689d9 (Corrected state mapping, fixed export, updated UI to Times New Roman, and refined table styling)
             if (!match && cleanName.length > 3) {
                 match = stateData.find(s => fuzzyMatch(s.name, name));
             }
@@ -208,11 +195,7 @@ function renderLegend() {
     const height = config.legendDirection === 'horizontal' ? 12 : 200;
 
     const svgLegend = legendEl.append("svg").attr("width", width + 40).attr("height", height + 40);
-<<<<<<< HEAD
-    const defsLegend = svgLegend.append("defs");
-=======
     const defsLegend = svgLegend.append("defs"); // Renamed to avoid conflict with main SVG defs
->>>>>>> 1c689d9 (Corrected state mapping, fixed export, updated UI to Times New Roman, and refined table styling)
     const linearGradient = defsLegend.append("linearGradient").attr("id", "linear-gradient");
 
     if (config.legendDirection === 'horizontal') {
@@ -541,37 +524,22 @@ function setupEventListeners() {
     const labelSizeEl = document.getElementById('label-size');
     if (labelSizeEl) labelSizeEl.addEventListener('input', e => {
         config.labelSize = parseInt(e.target.value);
-<<<<<<< HEAD
         const sv = document.getElementById('size-val');
         if (sv) sv.innerText = config.labelSize + "px"; updateMap();
-=======
-        const valEl = document.getElementById('size-val');
-        if (valEl) valEl.innerText = config.labelSize + "px"; updateMap();
->>>>>>> 1c689d9 (Corrected state mapping, fixed export, updated UI to Times New Roman, and refined table styling)
     });
 
     const valSizeEl = document.getElementById('value-size-global');
     if (valSizeEl) valSizeEl.addEventListener('input', e => {
         config.valueSize = parseInt(e.target.value);
-<<<<<<< HEAD
         const sv = document.getElementById('vsize-val');
         if (sv) sv.innerText = config.valueSize + "px"; updateMap();
-=======
-        const valEl = document.getElementById('vsize-val');
-        if (valEl) valEl.innerText = config.valueSize + "px"; updateMap();
->>>>>>> 1c689d9 (Corrected state mapping, fixed export, updated UI to Times New Roman, and refined table styling)
     });
 
     const labelAngleEl = document.getElementById('label-angle');
     if (labelAngleEl) labelAngleEl.addEventListener('input', e => {
         config.labelAngle = parseInt(e.target.value);
-<<<<<<< HEAD
         const sv = document.getElementById('angle-val');
         if (sv) sv.innerText = config.labelAngle + "°"; updateMap();
-=======
-        const valEl = document.getElementById('angle-val');
-        if (valEl) valEl.innerText = config.labelAngle + "°"; updateMap();
->>>>>>> 1c689d9 (Corrected state mapping, fixed export, updated UI to Times New Roman, and refined table styling)
     });
 
     const labelFontEl = document.getElementById('label-font');
@@ -612,11 +580,7 @@ function setupEventListeners() {
         }).catch(err => {
             console.error("Export failed:", err);
             gHandles.style("visibility", "visible");
-<<<<<<< HEAD
             alert("Export failed. Please try again.");
-=======
-            alert("Export failed. Please try taking a manual screenshot or checking the console.");
->>>>>>> 1c689d9 (Corrected state mapping, fixed export, updated UI to Times New Roman, and refined table styling)
         });
     });
 
@@ -639,10 +603,6 @@ function setupEventListeners() {
             reader.onload = (event) => {
                 const text = event.target.result;
                 const rows = text.split(/\r?\n/).filter(r => r.trim() !== '');
-<<<<<<< HEAD
-=======
-                // Check if first row is header
->>>>>>> 1c689d9 (Corrected state mapping, fixed export, updated UI to Times New Roman, and refined table styling)
                 const startIdx = isNaN(parseFloat(rows[0].split(',')[1])) ? 1 : 0;
 
                 rows.slice(startIdx).forEach(row => {
