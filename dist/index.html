@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India Map Visualizer Pro</title>
+  <script type="module" crossorigin src="/states-of-india/assets/index-DMPGKS50.js"></script>
+  <link rel="stylesheet" crossorigin href="/states-of-india/assets/index-B4rXHqhE.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <i data-lucide="map-pin"></i>
+            IndiaMap Visualizer
+        </div>
+        <div class="header-actions">
+            <button id="download-btn" class="btn">
+                <i data-lucide="download"></i>
+                Export Visualization
+            </button>
+        </div>
+    </header>
+
+    <main class="main-container" style="flex-direction: row-reverse;">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="file-text" size="14"></i> Data Import</h3>
+                <div class="control-group">
+                    <div class="input-field">
+                        <label>Upload CSV</label>
+                        <input type="file" id="csv-upload" accept=".csv" style="font-size: 0.7rem;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="settings" size="14"></i> Map & Title Settings</h3>
+                <div class="control-group">
+                    <div class="input-field">
+                        <label>Main Title (use \n for subtitle)</label>
+                        <textarea id="map-title-input" rows="2"
+                            style="width:100%; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.25rem;">States of India</textarea>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Title Size</label>
+                            <input type="number" id="title-size" step="0.1" value="2.5" style="width: 50px;">
+                        </div>
+                        <div class="input-field">
+                            <label>Color</label>
+                            <input type="color" id="title-color" value="#000000">
+                        </div>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Title X</label>
+                            <input type="number" id="title-x" value="0" style="width: 50px;">
+                        </div>
+                        <div class="input-field">
+                            <label>Title Y</label>
+                            <input type="number" id="title-y" value="0" style="width: 50px;">
+                        </div>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Map X</label>
+                            <input type="number" id="map-x" value="0" style="width: 50px;">
+                        </div>
+                        <div class="input-field">
+                            <label>Map Y</label>
+                            <input type="number" id="map-y" value="0" style="width: 50px;">
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label>Map Scale (Size)</label>
+                        <div class="range-input">
+                            <input type="range" id="map-scale" min="400" max="3000" value="1200">
+                            <span id="scale-val">1200</span>
+                        </div>
+                    </div>
+                    <div class="input-field" style="display:none;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="show-legend-old"> Show Scale Bar
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="layers" size="14"></i> Scale Bar / Legend</h3>
+                <div class="control-group">
+                    <div class="input-field" style="flex-direction:row; gap:1rem; align-items:center;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="show-legend" checked> Show Legend
+                        </label>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <label style="font-size:0.7rem; margin:0;">Dir:</label>
+                            <select id="legend-direction" style="font-size:0.7rem; padding:0.2rem;">
+                                <option value="horizontal">Horizontal</option>
+                                <option value="vertical">Vertical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Legend X</label>
+                            <input type="number" id="legend-x" value="20" style="width: 50px;">
+                        </div>
+                        <div class="input-field">
+                            <label>Legend Y</label>
+                            <input type="number" id="legend-y" value="20" style="width: 50px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="palette" size="14"></i> Heat Map Palette</h3>
+                <div class="control-group">
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Low</label>
+                            <input type="color" id="color-start" value="#fff5f5">
+                        </div>
+                        <div class="input-field">
+                            <label>High</label>
+                            <input type="color" id="color-end" value="#800000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="section-title"><i data-lucide="type" size="14"></i> Text Customization</h3>
+                <div class="control-group">
+                    <div class="input-field">
+                        <label>Font Family</label>
+                        <select id="label-font">
+                            <option value="Times New Roman" selected>Times New Roman</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Serif">Serif</option>
+                        </select>
+                    </div>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Font Color</label>
+                            <input type="color" id="label-color" value="#333333">
+                        </div>
+                        <div class="input-field">
+                            <label>Lines Color</label>
+                            <input type="color" id="line-color" value="#94a3b8">
+                        </div>
+                    </div>
+                    <div class="input-field" style="flex-direction: row; gap: 1rem;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="bold-labels" checked> Bold
+                        </label>
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="show-values" checked> Values
+                        </label>
+                    </div>
+                    <div class="input-field">
+                        <label>State Font Size</label>
+                        <div class="range-input">
+                            <input type="range" id="label-size" min="6" max="30" value="11">
+                            <span id="size-val">11px</span>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label>Value Font Size</label>
+                        <div class="range-input">
+                            <input type="range" id="value-size-global" min="6" max="30" value="10">
+                            <span id="vsize-val">10px</span>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label>Label Angle</label>
+                        <div class="range-input">
+                            <input type="range" id="label-angle" min="-180" max="180" value="0">
+                            <span id="angle-val">0°</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h3 class="section-title" style="margin: 0;">State Table</h3>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button id="undo-btn" class="btn btn-secondary"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.65rem;" disabled>
+                            <i data-lucide="undo" style="width:12px; height:12px;"></i> Undo
+                        </button>
+                        <button id="clear-colors-btn" class="btn btn-secondary"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.65rem;">Reset Layout</button>
+                    </div>
+                </div>
+                <div class="data-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th title="Value">Val</th>
+                                <th title="Name Size">SzN</th>
+                                <th title="Name Color">ClN</th>
+                                <th title="Value Size" style="border-left:1px solid #ddd;">SzV</th>
+                                <th title="Value Color">ClV</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </aside>
+
+        <section class="viewer">
+            <div id="map-export-area">
+                <div id="title-container" style="position: absolute; width: 100%; pointer-events: none; z-index: 10;">
+                    <h1 id="map-title-display"></h1>
+                </div>
+                <div id="map-container">
+                    <svg id="india-map"></svg>
+                </div>
+                <div class="legend" id="map-legend"
+                    style="display: none; position: absolute; pointer-events: all; cursor: move; z-index: 20;">
+                </div>
+            </div>
+            <div class="tooltip" id="tooltip"></div>
+        </section>
+    </main>
+
+</body>
+
+</html>
