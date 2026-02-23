@@ -2,70 +2,93 @@ import * as d3 from 'd3';
 import html2canvas from 'html2canvas';
 import { createIcons, MapPin, Download, Settings, Palette, Type, FileText, MousePointer2, Move, Undo } from 'lucide';
 
-// Global Data - Exact names from india_states.json for perfect mapping
-// Values updated based on user provided table
 let stateData = [
-    [
-        { id: "AN", name: "Andaman and Nicobar Islands", fullName: "Andaman and Nicobar Islands", value: 0.42, dx: 0, dy: -30, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "AP", name: "AP", fullName: "Andhra Pradesh", value: 4.96, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "AR", name: "AR", fullName: "Arunachal Pradesh", value: 0, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "AS", name: "Assam", fullName: "Assam", value: 3.12, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "BR", name: "Bihar", fullName: "Bihar", value: 10.41, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "CH", name: "Chandigarh", fullName: "Chandigarh", value: 0, dx: 0, dy: 0, vdx: 0, vdy: 0, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "CT", name: "CG", fullName: "Chhattisgarh", value: 2.94, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "DL", name: "Delhi", fullName: "Delhi", value: 0.99, dx: 110, dy: -30, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "DN", name: "DNH & DD", fullName: "Dadra and Nagar Haveli and Daman and Diu", value: 3.5, dx: -40, dy: 20, vdx: 0, vdy: 15, angle: 0, size: 9, vSize: 8, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "GA", name: "Goa", fullName: "Goa", value: 0.15, dx: -30, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "GJ", name: "Gujarat", fullName: "Gujarat", value: 6.04, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "HR", name: "HR", fullName: "Haryana", value: 2.78, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "HP", name: "HP", fullName: "Himachal Pradesh", value: 0.69, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "JK", name: "JK", fullName: "Jammu and Kashmir", value: 2.78, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "JH", name: "Jharkhand", fullName: "Jharkhand", value: 3.3, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "KA", name: "Karnataka", fullName: "Karnataka", value: 6.11, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "KL", name: "Kerala", fullName: "Kerala", value: 3.45, dx: -50, dy: 20, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "LA", name: "Ladakh", fullName: "Ladakh", value: 0.03, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "LD", name: "Lakshadweep", fullName: "Lakshadweep", value: 0.01, dx: -30, dy: -10, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "MP", name: "Madhya Pradesh", fullName: "Madhya Pradesh", value: 7.26, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "MH", name: "Maharashtra", fullName: "Maharashtra", value: 11.24, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "MN", name: "Manipur", fullName: "Manipur", value: 0.29, dx: 60, dy: 30, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "ML", name: "Meghalaya", fullName: "Meghalaya", value: 0.32, dx: -20, dy: 30, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "MZ", name: "Mizoram", fullName: "Mizoram", value: 0.13, dx: 60, dy: 40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "NL", name: "Nagaland", fullName: "Nagaland", value: 0.2, dx: 50, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "OR", name: "Odisha", fullName: "Odisha", value: 4.2, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "PB", name: "PB", fullName: "Punjab", value: 2.77, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "PY", name: "Puducherry", fullName: "Puducherry", value: 0.14, dx: 50, dy: -30, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "RJ", name: "Rajasthan", fullName: "Rajasthan", value: 6.85, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "SK", name: "Sikkim", fullName: "Sikkim", value: 0.06, dx: 10, dy: -40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: -30, cdy: 10 },
-        { id: "TN", name: "TN", fullName: "Tamil Nadu", value: 7.21, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "TG", name: "TG", fullName: "Telangana", value: 3.5, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "TR", name: "Tripura", fullName: "Tripura", value: 0.37, dx: -20, dy: 40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "UP", name: "UP", fullName: "Uttar Pradesh", value: 24.11, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: 12, vSize: 11, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "UT", name: "Uttarakhand", fullName: "Uttarakhand", value: 1.01, dx: 70, dy: -40, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-        { id: "WB", name: "WB", fullName: "West Bengal", value: 9.13, dx: 0, dy: 10, vdx: 0, vdy: 15, angle: 0, size: 11, vSize: 10, labelColor: null, valueColor: null, cdx: 0, cdy: 0 }
-    ]
+    { id: "JK", name: "JK", fullName: "Jammu & Kashmir", value: 2.78, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "LA", name: "Ladakh", fullName: "Ladakh", value: 0.03, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "PB", name: "PB", fullName: "Punjab", value: 2.77, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "UP", name: "UP", fullName: "Uttar Pradesh", value: 24.11, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "RJ", name: "Rajasthan", fullName: "Rajasthan", value: 6.85, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "GJ", name: "Gujarat", fullName: "Gujarat", value: 6.04, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "MP", name: "Madhya Pradesh", fullName: "Madhya Pradesh", value: 7.26, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "MH", name: "Maharashtra", fullName: "Maharashtra", value: 11.24, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "KA", name: "Karnataka", fullName: "Karnataka", value: 6.11, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "KL", name: "Kerala", fullName: "Kerala", value: 3.45, dx: -50, dy: 20, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "TN", name: "TN", fullName: "Tamil Nadu", value: 7.21, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "AP", name: "AP", fullName: "Andhra Pradesh", value: 4.96, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "TG", name: "TG", fullName: "Telangana", value: 3.5, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "OR", name: "Odisha", fullName: "Odisha", value: 4.2, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "CT", name: "CG", fullName: "Chhattisgarh", value: 2.94, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "JH", name: "Jharkhand", fullName: "Jharkhand", value: 3.3, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "WB", name: "WB", fullName: "West Bengal", value: 9.13, dx: 0, dy: 10, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "BR", name: "Bihar", fullName: "Bihar", value: 10.41, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "AS", name: "Assam", fullName: "Assam", value: 3.12, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "AR", name: "AR", fullName: "Arunachal Pradesh", value: 0.14, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "MN", name: "Manipur", fullName: "Manipur", value: 0.29, dx: 60, dy: 30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "TR", name: "Tripura", fullName: "Tripura", value: 0.37, dx: -20, dy: 40, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "MZ", name: "Mizoram", fullName: "Mizoram", value: 0.13, dx: 60, dy: 40, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "ML", name: "Meghalaya", fullName: "Meghalaya", value: 0.32, dx: -20, dy: 30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "NL", name: "Nagaland", fullName: "Nagaland", value: 0.2, dx: 50, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "SK", name: "Sikkim", fullName: "Sikkim", value: 0.06, dx: 10, dy: -40, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: -30, cdy: 10 },
+    { id: "HP", name: "HP", fullName: "Himachal Pradesh", value: 0.69, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "UT", name: "Uttarakhand", fullName: "Uttarakhand", value: 1.01, dx: 70, dy: -40, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "HR", name: "HR", fullName: "Haryana", value: 2.78, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "DL", name: "Delhi", fullName: "NCT of Delhi", value: 0.99, dx: 110, dy: -30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "DN", name: "DNH & DD", fullName: "Dadra and Nagar Haveli and Daman and Diu", value: 3.5, dx: -40, dy: 20, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "PY", name: "Puducherry", fullName: "Puducherry", value: 0.14, dx: 50, dy: -30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "GA", name: "Goa", fullName: "Goa", value: 0.15, dx: -30, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "AN", name: "Andaman & Nicobar Islands", fullName: "Andaman & Nicobar Island", value: 0.42, dx: 0, dy: -30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "LD", name: "Lakshadweep", fullName: "Lakshadweep", value: 0.01, dx: -30, dy: -10, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "CH", name: "Chandigarh", fullName: "Chandigarh", value: null, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 }
 ];
 
 const config = {
     scale: 1410,
-    colorStart: "#7ad4b1ff",
-    colorEnd: "#177a73ff",
-    labelSize: 9,
-    valueSize: 9,
+    colorStops: [
+        { offset: 0, color: "#7ad4b1ff" },
+        { offset: 100, color: "#177a73ff" }
+    ],
+    labelSize: 12,
+    valueSize: 15,
     labelColor: "#333",
     labelFont: "Times New Roman",
     labelAngle: 0,
     lineColor: "#333",
     showValues: true,
+    valuePrefix: "",
+    valueSuffix: "",
     showLegend: true, legendDirection: "horizontal", legendX: 380, legendY: 650,
-    boldLabels: false,
+    labelBold: false,
+    labelItalic: false,
+    valueBold: true,
+    valueItalic: false,
     selectedState: null,
     titleX: 450,
     titleY: 20,
     titleSize: 2.5,
-    titleColor: "#000000",
     mapX: -50,
     mapY: 10
 };
+
+const palettes = [
+    { name: "Viridis", stops: [{ offset: 0, color: "#440154" }, { offset: 100, color: "#fde725" }] },
+    { name: "Plasma", stops: [{ offset: 0, color: "#0d0887" }, { offset: 100, color: "#f0f921" }] },
+    { name: "Inferno", stops: [{ offset: 0, color: "#000004" }, { offset: 42, color: "#932667" }, { offset: 100, color: "#fcffa4" }] },
+    { name: "Magma", stops: [{ offset: 0, color: "#000004" }, { offset: 42, color: "#8c2981" }, { offset: 100, color: "#fcfdbf" }] },
+    { name: "Cividis", stops: [{ offset: 0, color: "#00204d" }, { offset: 100, color: "#ffea46" }] },
+    { name: "Turbo", stops: [{ offset: 0, color: "#30123b" }, { offset: 25, color: "#1ae4b6" }, { offset: 50, color: "#fbb021" }, { offset: 100, color: "#7a0403" }] },
+    { name: "Spectral", stops: [{ offset: 0, color: "#d53e4f" }, { offset: 50, color: "#ffffbf" }, { offset: 100, color: "#3288bd" }] },
+    { name: "Rocket", stops: [{ offset: 0, color: "#03051a" }, { offset: 50, color: "#e36a6f" }, { offset: 100, color: "#fcf2f4" }] },
+    { name: "Mako", stops: [{ offset: 0, color: "#0b0405" }, { offset: 50, color: "#ad1759" }, { offset: 100, color: "#f9f4b1" }] },
+    { name: "Blues", stops: [{ offset: 0, color: "#eff3ff" }, { offset: 100, color: "#084594" }] },
+    { name: "Greens", stops: [{ offset: 0, color: "#f7fcf5" }, { offset: 100, color: "#00441b" }] },
+    { name: "Reds", stops: [{ offset: 0, color: "#fff5f0" }, { offset: 100, color: "#67000d" }] },
+    { name: "Purples", stops: [{ offset: 0, color: "#f2f0f7" }, { offset: 100, color: "#3f007d" }] },
+    { name: "Oranges", stops: [{ offset: 0, color: "#fff5eb" }, { offset: 100, color: "#7f2704" }] },
+    { name: "YlGnBu", stops: [{ offset: 0, color: "#ffffd9" }, { offset: 50, color: "#41b6c4" }, { offset: 100, color: "#081d58" }] },
+    { name: "YlOrRd", stops: [{ offset: 0, color: "#ffffb2" }, { offset: 50, color: "#fd8d3c" }, { offset: 100, color: "#bd0026" }] },
+    { name: "RdYlBu", stops: [{ offset: 0, color: "#d73027" }, { offset: 50, color: "#ffffbf" }, { offset: 100, color: "#4575b4" }] },
+    { name: "RdGy", stops: [{ offset: 0, color: "#67001f" }, { offset: 50, color: "#ffffff" }, { offset: 100, color: "#1a1a1a" }] }
+];
 
 let stateHistory = [];
 function saveState() {
@@ -93,11 +116,21 @@ function undoState() {
         }
     });
 
-    const lgEl = document.getElementById('show-legend');
-    if (lgEl) lgEl.checked = config.showLegend;
+    ['label-bold', 'label-italic', 'value-bold', 'value-italic', 'show-legend', 'show-values'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            const prop = id.split('-').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('');
+            el.checked = config[prop];
+        }
+    });
 
     const lgDir = document.getElementById('legend-direction');
     if (lgDir) lgDir.value = config.legendDirection;
+
+    const vpEl = document.getElementById('value-prefix');
+    if (vpEl) vpEl.value = config.valuePrefix;
+    const vsEl = document.getElementById('value-suffix');
+    if (vsEl) vsEl.value = config.valueSuffix;
 
     const ms = document.getElementById('map-scale');
     if (ms) { ms.value = config.scale; document.getElementById('scale-val').innerText = config.scale; }
@@ -106,6 +139,7 @@ function undoState() {
     if (btn && stateHistory.length === 0) btn.disabled = true;
 
     renderTable();
+    renderGradientStops();
     updateMap();
 }
 
@@ -166,7 +200,21 @@ async function init() {
             if (match) f.properties._mapped_id = match.id;
         });
 
+        // Initialize UI with config values
+        ['label-bold', 'label-italic', 'value-bold', 'value-italic', 'show-legend', 'show-values'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                const prop = id.split('-').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('');
+                el.checked = config[prop];
+            }
+        });
+        const ls = document.getElementById('label-size');
+        if (ls) ls.value = config.labelSize;
+        const vs = document.getElementById('value-size-global');
+        if (vs) vs.value = config.valueSize;
+
         renderTable();
+        renderGradientStops();
         handleResize();
         setupEventListeners();
     } catch (e) { console.error(e); }
@@ -196,7 +244,11 @@ function renderLegend() {
     const width = config.legendDirection === 'horizontal' ? 200 : 20;
     const height = config.legendDirection === 'horizontal' ? 12 : 200;
 
-    const svgLegend = legendEl.append("svg").attr("width", width + 40).attr("height", height + 40);
+    // Increased width for vertical labels to prevent clipping
+    const svgWidth = config.legendDirection === 'horizontal' ? width + 40 : width + 100;
+    const svgHeight = config.legendDirection === 'horizontal' ? height + 40 : height + 40;
+
+    const svgLegend = legendEl.append("svg").attr("width", svgWidth).attr("height", svgHeight);
     const defsLegend = svgLegend.append("defs"); // Renamed to avoid conflict with main SVG defs
     const linearGradient = defsLegend.append("linearGradient").attr("id", "linear-gradient");
 
@@ -206,8 +258,9 @@ function renderLegend() {
         linearGradient.attr("x1", "0%").attr("y1", "100%").attr("x2", "0%").attr("y2", "0%");
     }
 
-    linearGradient.append("stop").attr("offset", "0%").attr("stop-color", config.colorStart);
-    linearGradient.append("stop").attr("offset", "100%").attr("stop-color", config.colorEnd);
+    config.colorStops.forEach(stop => {
+        linearGradient.append("stop").attr("offset", `${stop.offset}%`).attr("stop-color", stop.color);
+    });
 
     svgLegend.append("rect")
         .attr("width", width)
@@ -220,13 +273,60 @@ function renderLegend() {
     const minVal = d3.min(stateData, d => d.value) || 0;
     const maxVal = d3.max(stateData, d => d.value) || 100;
 
+    const formatNum = (v) => v !== null ? d3.format(",")(v) : "";
+
     if (config.legendDirection === 'horizontal') {
-        svgLegend.append("text").attr("x", 20).attr("y", 15).text(minVal).style("font-size", "10px").style("font-family", config.labelFont);
-        svgLegend.append("text").attr("x", 20 + width).attr("y", 15).attr("text-anchor", "end").text(maxVal).style("font-size", "10px").style("font-family", config.labelFont);
+        svgLegend.append("text").attr("x", 20).attr("y", 15).text(`${config.valuePrefix}${formatNum(minVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
+        svgLegend.append("text").attr("x", 20 + width).attr("y", 15).attr("text-anchor", "end").text(`${config.valuePrefix}${formatNum(maxVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
     } else {
-        svgLegend.append("text").attr("x", 20 + width + 5).attr("y", 20 + height).text(minVal).style("font-size", "10px").style("font-family", config.labelFont);
-        svgLegend.append("text").attr("x", 20 + width + 5).attr("y", 25).text(maxVal).style("font-size", "10px").style("font-family", config.labelFont);
+        // Vertical labels: Max at top, Min at bottom
+        svgLegend.append("text").attr("x", 20 + width + 5).attr("y", 20 + height).text(`${config.valuePrefix}${formatNum(minVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
+        svgLegend.append("text").attr("x", 20 + width + 5).attr("y", 30).text(`${config.valuePrefix}${formatNum(maxVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
     }
+}
+
+function renderGradientStops() {
+    const container = document.getElementById('gradient-stops-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    config.colorStops.sort((a, b) => a.offset - b.offset).forEach((stop, index) => {
+        const div = document.createElement('div');
+        div.className = 'color-pickers';
+        div.style.alignItems = 'flex-end';
+        div.innerHTML = `
+            <div class="input-field">
+                <label>Stop ${index + 1} (%)</label>
+                <input type="number" value="${stop.offset}" min="0" max="100" class="stop-offset" data-index="${index}">
+            </div>
+            <div class="input-field" style="flex-direction: row; gap: 0.2rem;">
+                <input type="color" value="${stop.color.substring(0, 7)}" class="stop-color" data-index="${index}">
+                <button class="remove-stop-btn" data-index="${index}" style="background:none; border:none; cursor:pointer; color:#ef4444; padding:0;">×</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    container.querySelectorAll('.stop-offset').forEach(el => el.addEventListener('change', e => {
+        const idx = parseInt(e.target.dataset.index);
+        config.colorStops[idx].offset = parseInt(e.target.value);
+        updateMap();
+    }));
+
+    container.querySelectorAll('.stop-color').forEach(el => el.addEventListener('input', e => {
+        const idx = parseInt(e.target.dataset.index);
+        config.colorStops[idx].color = e.target.value;
+        updateMap();
+    }));
+
+    container.querySelectorAll('.remove-stop-btn').forEach(el => el.addEventListener('click', e => {
+        if (config.colorStops.length <= 2) return;
+        saveState();
+        const idx = parseInt(e.target.dataset.index);
+        config.colorStops.splice(idx, 1);
+        renderGradientStops();
+        updateMap();
+    }));
 }
 
 function updateMap() {
@@ -236,17 +336,25 @@ function updateMap() {
     projection.scale(config.scale).translate([width / 2, height / 2 + 30]);
     projection.center([82.7, 21.5]);
 
-    const minVal = d3.min(stateData, d => d.value) || 0;
-    const maxVal = d3.max(stateData, d => d.value) || 100;
-    const colorScale = d3.scaleLinear().domain([minVal, maxVal]).range([config.colorStart, config.colorEnd]);
+    const validValues = stateData.filter(d => d.value !== null).map(d => d.value);
+    const minVal = validValues.length > 0 ? d3.min(validValues) : 0;
+    const maxVal = validValues.length > 0 ? d3.max(validValues) : 100;
+    
+    const colorScale = d3.scaleLinear()
+        .domain(config.colorStops.map(s => minVal + (maxVal - minVal) * (s.offset / 100)))
+        .range(config.colorStops.map(s => s.color));
 
     const titleDisp = d3.select('#map-title-display');
     const titleIn = document.getElementById('map-title-input');
     const rawTitle = titleIn ? titleIn.value : "";
-    titleDisp.html(rawTitle.replace(/\\n/g, '<br><span style="font-size:0.5em; font-weight:normal; color:#666; display:block; margin-top:5px;">') + '</span>')
+    
+    // Simple newline parsing, removed custom word colors
+    let titleHtml = rawTitle.replace(/\\n/g, '<br><span style="font-size:0.5em; font-weight:normal; color:#666; display:block; margin-top:5px;">');
+    if (titleHtml.includes('<br>')) titleHtml += '</span>';
+
+    titleDisp.html(titleHtml)
         .style("transform", `translate(${config.titleX}px, ${config.titleY}px)`)
         .style("font-size", `${config.titleSize}rem`)
-        .style("color", config.titleColor)
         .style("cursor", "move")
         .style("pointer-events", "all")
         .call(d3.drag().on("start", () => saveState()).on("drag", function (event) {
@@ -275,7 +383,8 @@ function updateMap() {
         .merge(states).transition().duration(200).attr("d", path)
         .attr("fill", d => {
             const data = stateData.find(s => s.id === d.properties._mapped_id);
-            return data ? colorScale(data.value) : "#f1f5f9";
+            if (!data || data.value === null) return "#f1f5f9"; // Default "no data" color
+            return colorScale(data.value);
         });
 
     renderLabels();
@@ -322,7 +431,7 @@ function renderLabels() {
         .attr("fill", "none")
         .attr("stroke-dasharray", "2,2")
         .attr("d", d => {
-            if (d.value === 0 || !d.dx || (Math.abs(d.dx) < 15 && Math.abs(d.dy) < 15)) return "";
+            if (d.value === null || !d.dx || (Math.abs(d.dx) < 15 && Math.abs(d.dy) < 15)) return "";
             const cx = d.origX + (d.cdx || 0);
             const cy = d.y + (d.cdy || 0);
             return `M${d.x},${d.y} Q${cx},${cy} ${d.origX},${d.origY}`;
@@ -354,20 +463,22 @@ function renderLabels() {
     labelsMerge.attr("transform", d => `translate(${d.x},${d.y}) rotate(${d.angle || config.labelAngle})`);
 
     labelsMerge.select(".label-name")
-        .text(d => d.value === 0 ? "" : d.name)
+        .text(d => d.value === null ? "" : d.name)
         .attr("font-size", d => d.size || config.labelSize)
         .attr("fill", d => d.labelColor || config.labelColor)
         .attr("font-family", config.labelFont)
-        .attr("font-weight", config.boldLabels ? 'bold' : 'normal')
+        .attr("font-weight", config.labelBold ? 'bold' : 'normal')
+        .attr("font-style", config.labelItalic ? 'italic' : 'normal')
         .attr("text-anchor", "middle")
         .on("click", (e, d) => { e.stopPropagation(); config.selectedState = d.id; updateMap(); });
 
     labelsMerge.select(".label-value")
-        .text(d => (config.showValues && d.value !== 0) ? d.value : "")
+        .text(d => (config.showValues && d.value !== null) ? `${config.valuePrefix}${d3.format(",")(d.value)}${config.valueSuffix}` : "")
         .attr("font-size", d => d.vSize || config.valueSize)
         .attr("fill", d => d.valueColor || d.labelColor || config.labelColor)
         .attr("font-family", config.labelFont)
-        .attr("font-weight", config.boldLabels ? 'bold' : 'normal')
+        .attr("font-weight", config.valueBold ? 'bold' : 'normal')
+        .attr("font-style", config.valueItalic ? 'italic' : 'normal')
         .attr("text-anchor", "middle")
         .attr("dx", d => d.vdx)
         .attr("dy", d => d.vdy)
@@ -472,7 +583,7 @@ function setupEventListeners() {
     if (undoBtn) undoBtn.addEventListener('click', undoState);
 
     const legDir = document.getElementById('legend-direction');
-    if (legDir) legDir.addEventListener('change', e => { saveState(); config.legendDirection = e.target.value; updateMap(); });
+    if (lgDir) lgDir.addEventListener('change', e => { saveState(); config.legendDirection = e.target.value; updateMap(); });
 
     const legX = document.getElementById('legend-x');
     if (legX) legX.addEventListener('input', e => { config.legendX = parseFloat(e.target.value); updateMap(); });
@@ -489,12 +600,6 @@ function setupEventListeners() {
         });
     });
 
-    const titleColorEl = document.getElementById('title-color');
-    if (titleColorEl) titleColorEl.addEventListener('input', e => {
-        config.titleColor = e.target.value;
-        updateMap();
-    });
-
     const mapScaleEl = document.getElementById('map-scale');
     if (mapScaleEl) mapScaleEl.addEventListener('input', e => {
         config.scale = parseInt(e.target.value);
@@ -509,13 +614,65 @@ function setupEventListeners() {
         updateMap();
     });
 
-    const boldLabelsEl = document.getElementById('bold-labels');
-    if (boldLabelsEl) boldLabelsEl.addEventListener('change', e => {
-        config.boldLabels = e.target.checked;
+    const paletteSelect = document.getElementById('palette-select');
+    if (paletteSelect) {
+        paletteSelect.addEventListener('change', (e) => {
+            const paletteName = e.target.value;
+            if (paletteName) {
+                saveState();
+                const palette = palettes.find(p => p.name === paletteName);
+                if (palette) {
+                    config.colorStops = JSON.parse(JSON.stringify(palette.stops));
+                    renderGradientStops();
+                    updateMap();
+                }
+            }
+        });
+    }
+
+    const addStopBtn = document.getElementById('add-stop-btn');
+    if (addStopBtn) {
+        addStopBtn.addEventListener('click', () => {
+            if (config.colorStops.length >= 8) return;
+            saveState();
+            const last = config.colorStops[config.colorStops.length - 1];
+            const newOffset = Math.min(100, last.offset + 10);
+            config.colorStops.push({ offset: newOffset, color: last.color });
+            renderGradientStops();
+            updateMap();
+        });
+    }
+
+    const labelBoldEl = document.getElementById('label-bold');
+    if (labelBoldEl) labelBoldEl.addEventListener('change', e => {
+        config.labelBold = e.target.checked;
         updateMap();
     });
 
-    ['color-start', 'color-end', 'label-color', 'line-color'].forEach(id => {
+    const labelItalicEl = document.getElementById('label-italic');
+    if (labelItalicEl) labelItalicEl.addEventListener('change', e => {
+        config.labelItalic = e.target.checked;
+        updateMap();
+    });
+
+    const valueBoldEl = document.getElementById('value-bold');
+    if (valueBoldEl) valueBoldEl.addEventListener('change', e => {
+        config.valueBold = e.target.checked;
+        updateMap();
+    });
+
+    const valueItalicEl = document.getElementById('value-italic');
+    if (valueItalicEl) valueItalicEl.addEventListener('change', e => {
+        config.valueItalic = e.target.checked;
+        updateMap();
+    });
+
+    ['color-start', 'color-end'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none'; // Replaced by gradient stops
+    });
+
+    ['label-color', 'line-color'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', e => {
             const key = id.split('-').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('');
@@ -554,6 +711,16 @@ function setupEventListeners() {
         config.showValues = e.target.checked; updateMap();
     });
 
+    const valPrefixEl = document.getElementById('value-prefix');
+    if (valPrefixEl) valPrefixEl.addEventListener('input', e => {
+        config.valuePrefix = e.target.value; updateMap();
+    });
+
+    const valSuffixEl = document.getElementById('value-suffix');
+    if (valSuffixEl) valSuffixEl.addEventListener('input', e => {
+        config.valueSuffix = e.target.value; updateMap();
+    });
+
     const downloadBtn = document.getElementById('download-btn');
     if (downloadBtn) downloadBtn.addEventListener('click', () => {
         const area = document.getElementById('map-export-area');
@@ -565,34 +732,81 @@ function setupEventListeners() {
             .replace(/^_|_$/g, '');
         const fileName = (snakeName || "india_map") + ".png";
 
-        gHandles.style("visibility", "hidden");
+        // Save current view
+        const oldScale = config.scale;
+        const oldMapX = config.mapX;
+        const oldMapY = config.mapY;
 
-        html2canvas(area, {
-            backgroundColor: '#ffffff',
-            scale: 2,
-            logging: false,
-            useCORS: true,
-            allowTaint: true
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = fileName;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-            gHandles.style("visibility", "visible");
-        }).catch(err => {
-            console.error("Export failed:", err);
-            gHandles.style("visibility", "visible");
-            alert("Export failed. Please try again.");
-        });
+        // Reset to default baseline for export
+        config.scale = 1410;
+        config.mapX = -50;
+        config.mapY = 10;
+        
+        gHandles.style("visibility", "hidden");
+        updateMap();
+
+        setTimeout(() => {
+            html2canvas(area, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = fileName;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                
+                // Restore view
+                config.scale = oldScale;
+                config.mapX = oldMapX;
+                config.mapY = oldMapY;
+                gHandles.style("visibility", "visible");
+                updateMap();
+            }).catch(err => {
+                console.error("Export failed:", err);
+                config.scale = oldScale;
+                config.mapX = oldMapX;
+                config.mapY = oldMapY;
+                gHandles.style("visibility", "visible");
+                updateMap();
+                alert("Export failed. Please try again.");
+            });
+        }, 100);
     });
 
     const resetBtn = document.getElementById('clear-colors-btn');
     if (resetBtn) resetBtn.addEventListener('click', () => {
-        stateData.forEach(s => { s.dx = 0; s.dy = 0; s.angle = 0; s.vdx = 0; s.vdy = 15; s.cdx = 0; s.cdy = -20; s.labelColor = null; s.valueColor = null; });
-        config.mapX = 0; config.mapY = 0; config.titleX = 450; config.titleY = 20;
-        document.getElementById('map-x').value = 0; document.getElementById('map-y').value = 0;
+        stateData.forEach(s => { s.dx = 0; s.dy = 0; s.angle = 0; s.vdx = 0; s.vdy = 15; s.cdx = 0; s.cdy = -20; s.labelColor = null; s.valueColor = null; s.size = 12; s.vSize = 15; });
+        config.mapX = -50; config.mapY = 10; config.titleX = 450; config.titleY = 20;
+        config.scale = 1410;
+        config.labelSize = 12; config.valueSize = 15;
+        config.labelBold = false; config.labelItalic = false;
+        config.valueBold = true; config.valueItalic = false;
+        config.valuePrefix = ""; config.valueSuffix = "";
+        config.colorStops = [{ offset: 0, color: "#7ad4b1ff" }, { offset: 100, color: "#177a73ff" }];
+        
+        document.getElementById('map-x').value = -50; document.getElementById('map-y').value = 10;
         document.getElementById('title-x').value = 450; document.getElementById('title-y').value = 20;
-        renderTable(); updateMap();
+        document.getElementById('label-size').value = 12;
+        document.getElementById('value-size-global').value = 15;
+        document.getElementById('size-val').innerText = "12px";
+        document.getElementById('vsize-val').innerText = "15px";
+        document.getElementById('value-prefix').value = "";
+        document.getElementById('value-suffix').value = "";
+        
+        ['label-bold', 'label-italic', 'value-bold', 'value-italic'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                const prop = id.split('-').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('');
+                el.checked = config[prop];
+            }
+        });
+        
+        renderTable(); 
+        renderGradientStops();
+        updateMap();
     });
 
     const csvUpload = document.getElementById('csv-upload');
@@ -607,6 +821,9 @@ function setupEventListeners() {
                 const rows = text.split(/\r?\n/).filter(r => r.trim() !== '');
                 const startIdx = isNaN(parseFloat(rows[0].split(',')[1])) ? 1 : 0;
 
+                // Reset all values to null before applying CSV data
+                stateData.forEach(s => s.value = null);
+
                 rows.slice(startIdx).forEach(row => {
                     const cols = row.split(',');
                     if (cols.length >= 2) {
@@ -614,11 +831,22 @@ function setupEventListeners() {
                         const val = parseFloat(cols[1]);
                         if (!isNaN(val)) {
                             const cleanRowName = rowName.toLowerCase().replace(/[^a-z0-9]/g, '');
-                            const state = stateData.find(s =>
+                            
+                            // Try exact match first
+                            let state = stateData.find(s =>
                                 s.id.toLowerCase() === cleanRowName ||
                                 (s.fullName && s.fullName.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanRowName) ||
                                 s.name.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanRowName
                             );
+
+                            // Fallback to fuzzy match if no exact match found
+                            if (!state) {
+                                state = stateData.find(s =>
+                                    (s.fullName && fuzzyMatch(s.fullName, rowName)) ||
+                                    fuzzyMatch(s.name, rowName)
+                                );
+                            }
+
                             if (state) state.value = val;
                         }
                     }
@@ -633,8 +861,15 @@ function setupEventListeners() {
 
 function fuzzyMatch(a, b) {
     if (!a || !b) return false;
-    const clean = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return clean(a) === clean(b) || clean(a).includes(clean(b)) || clean(b).includes(clean(a));
+    const cleanA = a.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanB = b.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (cleanA === cleanB) return true;
+    
+    // Only allow substring match if both strings are long enough to avoid short ID matches (like "AR" matching "Uttarakhand")
+    if (cleanA.length > 3 && cleanB.length > 3) {
+        return cleanA.includes(cleanB) || cleanB.includes(cleanA);
+    }
+    return false;
 }
 
 function renderTable() {

@@ -40,16 +40,13 @@
                     <div class="input-field">
                         <label>Main Title (use \n for subtitle)</label>
                         <textarea id="map-title-input" rows="2"
+                            placeholder="States of India"
                             style="width:100%; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.25rem;">States of India</textarea>
                     </div>
                     <div class="color-pickers">
                         <div class="input-field">
                             <label>Title Size</label>
                             <input type="number" id="title-size" step="0.1" value="2.5" style="width: 50px;">
-                        </div>
-                        <div class="input-field">
-                            <label>Color</label>
-                            <input type="color" id="title-color" value="#000000">
                         </div>
                     </div>
                     <div class="color-pickers">
@@ -118,16 +115,34 @@
             <div class="sidebar-section">
                 <h3 class="section-title"><i data-lucide="palette" size="14"></i> Heat Map Palette</h3>
                 <div class="control-group">
-                    <div class="color-pickers">
-                        <div class="input-field">
-                            <label>Low</label>
-                            <input type="color" id="color-start" value="#fff5f5">
-                        </div>
-                        <div class="input-field">
-                            <label>High</label>
-                            <input type="color" id="color-end" value="#800000">
-                        </div>
+                    <div class="input-field">
+                        <label>Predefined Palettes</label>
+                        <select id="palette-select">
+                            <option value="">Custom...</option>
+                            <option value="Viridis">Viridis</option>
+                            <option value="Plasma">Plasma</option>
+                            <option value="Inferno">Inferno</option>
+                            <option value="Magma">Magma</option>
+                            <option value="Cividis">Cividis</option>
+                            <option value="Turbo">Turbo</option>
+                            <option value="Spectral">Spectral</option>
+                            <option value="Rocket">Rocket</option>
+                            <option value="Mako">Mako</option>
+                            <option value="Blues">Blues</option>
+                            <option value="Greens">Greens</option>
+                            <option value="Reds">Reds</option>
+                            <option value="Purples">Purples</option>
+                            <option value="Oranges">Oranges</option>
+                            <option value="YlGnBu">YlGnBu</option>
+                            <option value="YlOrRd">YlOrRd</option>
+                            <option value="RdYlBu">RdYlBu</option>
+                            <option value="RdGy">RdGy</option>
+                        </select>
                     </div>
+                    <div id="gradient-stops-container" class="control-group" style="gap: 0.5rem;">
+                        <!-- Gradient stops will be rendered here -->
+                    </div>
+                    <button id="add-stop-btn" class="btn btn-secondary" style="padding: 0.4rem; font-size: 0.7rem;">+ Add Color Stop</button>
                 </div>
             </div>
 

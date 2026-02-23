@@ -31,14 +31,14 @@ let stateData = [
     { id: "SK", name: "Sikkim", fullName: "Sikkim", value: 0.06, dx: 10, dy: -40, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: -30, cdy: 10 },
     { id: "HP", name: "HP", fullName: "Himachal Pradesh", value: 0.69, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "UT", name: "Uttarakhand", fullName: "Uttarakhand", value: 1.01, dx: 70, dy: -40, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-    { id: "HR", name: "Haryana", fullName: "Haryana", value: 2.78, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "HR", name: "HR", fullName: "Haryana", value: 2.78, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "DL", name: "Delhi", fullName: "NCT of Delhi", value: 0.99, dx: 110, dy: -30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "DN", name: "DNH & DD", fullName: "Dadra and Nagar Haveli and Daman and Diu", value: 3.5, dx: -40, dy: 20, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "PY", name: "Puducherry", fullName: "Puducherry", value: 0.14, dx: 50, dy: -30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "GA", name: "Goa", fullName: "Goa", value: 0.15, dx: -30, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "AN", name: "Andaman & Nicobar Islands", fullName: "Andaman & Nicobar Island", value: 0.42, dx: 0, dy: -30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "LD", name: "Lakshadweep", fullName: "Lakshadweep", value: 0.01, dx: -30, dy: -10, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-    { id: "CH", name: "Chandigarh", fullName: "Chandigarh", value: null, dx: 0, dy: 0, vdx: 0, vdy: 0, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 }
+    { id: "CH", name: "Chandigarh", fullName: "Chandigarh", value: null, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 }
 ];
 
 const config = {
@@ -65,12 +65,6 @@ const config = {
     titleX: 450,
     titleY: 20,
     titleSize: 2.5,
-    titleColor: "#000000",
-    titleBgColor: "transparent",
-    titleBorderColor: "transparent",
-    titlePadding: 10,
-    titleBorderRadius: 0,
-    titleBorderWidth: 0,
     mapX: -50,
     mapY: 10
 };
@@ -145,6 +139,7 @@ function undoState() {
     if (btn && stateHistory.length === 0) btn.disabled = true;
 
     renderTable();
+    renderGradientStops();
     updateMap();
 }
 
@@ -219,6 +214,7 @@ async function init() {
         if (vs) vs.value = config.valueSize;
 
         renderTable();
+        renderGradientStops();
         handleResize();
         setupEventListeners();
     } catch (e) { console.error(e); }
@@ -248,7 +244,11 @@ function renderLegend() {
     const width = config.legendDirection === 'horizontal' ? 200 : 20;
     const height = config.legendDirection === 'horizontal' ? 12 : 200;
 
-    const svgLegend = legendEl.append("svg").attr("width", width + 40).attr("height", height + 40);
+    // Increased width for vertical labels to prevent clipping
+    const svgWidth = config.legendDirection === 'horizontal' ? width + 40 : width + 100;
+    const svgHeight = config.legendDirection === 'horizontal' ? height + 40 : height + 40;
+
+    const svgLegend = legendEl.append("svg").attr("width", svgWidth).attr("height", svgHeight);
     const defsLegend = svgLegend.append("defs"); // Renamed to avoid conflict with main SVG defs
     const linearGradient = defsLegend.append("linearGradient").attr("id", "linear-gradient");
 
@@ -279,8 +279,9 @@ function renderLegend() {
         svgLegend.append("text").attr("x", 20).attr("y", 15).text(`${config.valuePrefix}${formatNum(minVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
         svgLegend.append("text").attr("x", 20 + width).attr("y", 15).attr("text-anchor", "end").text(`${config.valuePrefix}${formatNum(maxVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
     } else {
+        // Vertical labels: Max at top, Min at bottom
         svgLegend.append("text").attr("x", 20 + width + 5).attr("y", 20 + height).text(`${config.valuePrefix}${formatNum(minVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
-        svgLegend.append("text").attr("x", 20 + width + 5).attr("y", 25).text(`${config.valuePrefix}${formatNum(maxVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
+        svgLegend.append("text").attr("x", 20 + width + 5).attr("y", 30).text(`${config.valuePrefix}${formatNum(maxVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
     }
 }
 
@@ -330,7 +331,6 @@ function renderGradientStops() {
 
 function updateMap() {
     renderLegend();
-    renderGradientStops();
     if (!geoData) return;
 
     projection.scale(config.scale).translate([width / 2, height / 2 + 30]);
@@ -355,11 +355,6 @@ function updateMap() {
     titleDisp.html(titleHtml)
         .style("transform", `translate(${config.titleX}px, ${config.titleY}px)`)
         .style("font-size", `${config.titleSize}rem`)
-        .style("color", config.titleColor)
-        .style("background-color", config.titleBgColor)
-        .style("border", `${config.titleBorderWidth}px solid ${config.titleBorderColor}`)
-        .style("padding", `${config.titlePadding}px`)
-        .style("border-radius", `${config.titleBorderRadius}px`)
         .style("cursor", "move")
         .style("pointer-events", "all")
         .call(d3.drag().on("start", () => saveState()).on("drag", function (event) {
@@ -605,58 +600,6 @@ function setupEventListeners() {
         });
     });
 
-    const titleColorEl = document.getElementById('title-color');
-    if (titleColorEl) titleColorEl.addEventListener('input', e => {
-        config.titleColor = e.target.value;
-        updateMap();
-    });
-
-    const titleBgColorEl = document.getElementById('title-bg-color');
-    if (titleBgColorEl) titleBgColorEl.addEventListener('input', e => {
-        config.titleBgColor = e.target.value;
-        const trans = document.getElementById('title-bg-transparent');
-        if (trans) trans.checked = false;
-        updateMap();
-    });
-
-    const titleBgTransEl = document.getElementById('title-bg-transparent');
-    if (titleBgTransEl) titleBgTransEl.addEventListener('change', e => {
-        if (e.target.checked) config.titleBgColor = "transparent";
-        else {
-            const el = document.getElementById('title-bg-color');
-            config.titleBgColor = el ? el.value : "#ffffff";
-        }
-        updateMap();
-    });
-
-    const titleBorderColorEl = document.getElementById('title-border-color');
-    if (titleBorderColorEl) titleBorderColorEl.addEventListener('input', e => {
-        config.titleBorderColor = e.target.value;
-        config.titleBorderWidth = 1;
-        const none = document.getElementById('title-border-none');
-        if (none) none.checked = false;
-        updateMap();
-    });
-
-    const titleBorderNoneEl = document.getElementById('title-border-none');
-    if (titleBorderNoneEl) titleBorderNoneEl.addEventListener('change', e => {
-        if (e.target.checked) config.titleBorderWidth = 0;
-        else config.titleBorderWidth = 1;
-        updateMap();
-    });
-
-    const titlePaddingEl = document.getElementById('title-padding');
-    if (titlePaddingEl) titlePaddingEl.addEventListener('input', e => {
-        config.titlePadding = parseInt(e.target.value) || 0;
-        updateMap();
-    });
-
-    const titleRadiusEl = document.getElementById('title-radius');
-    if (titleRadiusEl) titleRadiusEl.addEventListener('input', e => {
-        config.titleBorderRadius = parseInt(e.target.value) || 0;
-        updateMap();
-    });
-
     const mapScaleEl = document.getElementById('map-scale');
     if (mapScaleEl) mapScaleEl.addEventListener('input', e => {
         config.scale = parseInt(e.target.value);
@@ -693,7 +636,6 @@ function setupEventListeners() {
             if (config.colorStops.length >= 8) return;
             saveState();
             const last = config.colorStops[config.colorStops.length - 1];
-            const prev = config.colorStops[config.colorStops.length - 2];
             const newOffset = Math.min(100, last.offset + 10);
             config.colorStops.push({ offset: newOffset, color: last.color });
             renderGradientStops();
@@ -845,12 +787,6 @@ function setupEventListeners() {
         config.valuePrefix = ""; config.valueSuffix = "";
         config.colorStops = [{ offset: 0, color: "#7ad4b1ff" }, { offset: 100, color: "#177a73ff" }];
         
-        config.titleBgColor = "transparent";
-        config.titleBorderColor = "transparent";
-        config.titlePadding = 10;
-        config.titleBorderRadius = 0;
-        config.titleBorderWidth = 0;
-
         document.getElementById('map-x').value = -50; document.getElementById('map-y').value = 10;
         document.getElementById('title-x').value = 450; document.getElementById('title-y').value = 20;
         document.getElementById('label-size').value = 12;
@@ -860,15 +796,6 @@ function setupEventListeners() {
         document.getElementById('value-prefix').value = "";
         document.getElementById('value-suffix').value = "";
         
-        const bgt = document.getElementById('title-bg-transparent');
-        if (bgt) bgt.checked = true;
-        const bdn = document.getElementById('title-border-none');
-        if (bdn) bdn.checked = true;
-        const pad = document.getElementById('title-padding');
-        if (pad) pad.value = 10;
-        const rad = document.getElementById('title-radius');
-        if (rad) rad.value = 0;
-
         ['label-bold', 'label-italic', 'value-bold', 'value-italic'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
@@ -877,7 +804,9 @@ function setupEventListeners() {
             }
         });
         
-        renderTable(); updateMap();
+        renderTable(); 
+        renderGradientStops();
+        updateMap();
     });
 
     const csvUpload = document.getElementById('csv-upload');
@@ -902,11 +831,22 @@ function setupEventListeners() {
                         const val = parseFloat(cols[1]);
                         if (!isNaN(val)) {
                             const cleanRowName = rowName.toLowerCase().replace(/[^a-z0-9]/g, '');
-                            const state = stateData.find(s =>
+                            
+                            // Try exact match first
+                            let state = stateData.find(s =>
                                 s.id.toLowerCase() === cleanRowName ||
-                                (s.fullName && fuzzyMatch(s.fullName, rowName)) ||
-                                fuzzyMatch(s.name, rowName)
+                                (s.fullName && s.fullName.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanRowName) ||
+                                s.name.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanRowName
                             );
+
+                            // Fallback to fuzzy match if no exact match found
+                            if (!state) {
+                                state = stateData.find(s =>
+                                    (s.fullName && fuzzyMatch(s.fullName, rowName)) ||
+                                    fuzzyMatch(s.name, rowName)
+                                );
+                            }
+
                             if (state) state.value = val;
                         }
                     }
@@ -921,8 +861,15 @@ function setupEventListeners() {
 
 function fuzzyMatch(a, b) {
     if (!a || !b) return false;
-    const clean = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return clean(a) === clean(b) || clean(a).includes(clean(b)) || clean(b).includes(clean(a));
+    const cleanA = a.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanB = b.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (cleanA === cleanB) return true;
+    
+    // Only allow substring match if both strings are long enough to avoid short ID matches (like "AR" matching "Uttarakhand")
+    if (cleanA.length > 3 && cleanB.length > 3) {
+        return cleanA.includes(cleanB) || cleanB.includes(cleanA);
+    }
+    return false;
 }
 
 function renderTable() {
