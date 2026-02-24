@@ -24,50 +24,30 @@
 
     <main class="main-container" style="flex-direction: row-reverse;">
         <aside class="sidebar">
-            <div class="sidebar-section">
-                <h3 class="section-title"><i data-lucide="file-text" size="14"></i> Data Import</h3>
-                <div class="control-group">
+            <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <button id="reset-all-btn" class="btn btn-secondary" style="width: 100%; font-size: 0.75rem; background: #fee2e2; border-color: #fecaca; color: #991b1b;">
+                    <i data-lucide="rotate-ccw" style="width:14px; height:14px;"></i> Reset to Default
+                </button>
+            </div>
+
+            <details class="sidebar-section" open>
+                <summary class="section-title"><i data-lucide="file-text" size="14"></i> Data Import</summary>
+                <div class="section-content">
                     <div class="input-field">
                         <label>Upload CSV</label>
                         <input type="file" id="csv-upload" accept=".csv" style="font-size: 0.7rem;">
                     </div>
                 </div>
-            </div>
+            </details>
 
-            <div class="sidebar-section">
-                <h3 class="section-title"><i data-lucide="settings" size="14"></i> Map & Title Settings</h3>
-                <div class="control-group">
+            <details class="sidebar-section" open>
+                <summary class="section-title"><i data-lucide="settings" size="14"></i> Map & Title Settings</summary>
+                <div class="section-content">
                     <div class="input-field">
                         <label>Main Title (use \n for subtitle)</label>
                         <textarea id="map-title-input" rows="2"
                             placeholder="States of India"
                             style="width:100%; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.25rem;">States of India</textarea>
-                    </div>
-                    <div class="color-pickers">
-                        <div class="input-field">
-                            <label>Title Size</label>
-                            <input type="number" id="title-size" step="0.1" value="2.5" style="width: 50px;">
-                        </div>
-                    </div>
-                    <div class="color-pickers">
-                        <div class="input-field">
-                            <label>Title X</label>
-                            <input type="number" id="title-x" value="0" style="width: 50px;">
-                        </div>
-                        <div class="input-field">
-                            <label>Title Y</label>
-                            <input type="number" id="title-y" value="0" style="width: 50px;">
-                        </div>
-                    </div>
-                    <div class="color-pickers">
-                        <div class="input-field">
-                            <label>Map X</label>
-                            <input type="number" id="map-x" value="0" style="width: 50px;">
-                        </div>
-                        <div class="input-field">
-                            <label>Map Y</label>
-                            <input type="number" id="map-y" value="0" style="width: 50px;">
-                        </div>
                     </div>
                     <div class="input-field">
                         <label>Map Scale (Size)</label>
@@ -76,17 +56,25 @@
                             <span id="scale-val">1200</span>
                         </div>
                     </div>
-                    <div class="input-field" style="display:none;">
-                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
-                            <input type="checkbox" id="show-legend-old"> Show Scale Bar
-                        </label>
+                    <div class="color-pickers">
+                        <div class="input-field">
+                            <label>Border Color</label>
+                            <input type="color" id="border-color" value="#191919">
+                        </div>
+                        <div class="input-field">
+                            <label>Border Thickness</label>
+                            <div class="range-input">
+                                <input type="range" id="border-thickness" min="0.1" max="5" step="0.1" value="0.7">
+                                <span id="border-val">0.7</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </details>
 
-            <div class="sidebar-section">
-                <h3 class="section-title"><i data-lucide="layers" size="14"></i> Scale Bar / Legend</h3>
-                <div class="control-group">
+            <details class="sidebar-section">
+                <summary class="section-title"><i data-lucide="layers" size="14"></i> Scale Bar / Legend</summary>
+                <div class="section-content">
                     <div class="input-field" style="flex-direction:row; gap:1rem; align-items:center;">
                         <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
                             <input type="checkbox" id="show-legend" checked> Show Legend
@@ -110,11 +98,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </details>
 
-            <div class="sidebar-section">
-                <h3 class="section-title"><i data-lucide="palette" size="14"></i> Heat Map Palette</h3>
-                <div class="control-group">
+            <details class="sidebar-section">
+                <summary class="section-title"><i data-lucide="palette" size="14"></i> Heat Map Palette</summary>
+                <div class="section-content">
                     <div class="input-field">
                         <label>Predefined Palettes</label>
                         <select id="palette-select">
@@ -139,16 +127,16 @@
                             <option value="RdGy">RdGy</option>
                         </select>
                     </div>
-                    <div id="gradient-stops-container" class="control-group" style="gap: 0.5rem;">
+                    <div id="gradient-stops-container" class="control-group" style="gap: 0.5rem; padding: 0;">
                         <!-- Gradient stops will be rendered here -->
                     </div>
                     <button id="add-stop-btn" class="btn btn-secondary" style="padding: 0.4rem; font-size: 0.7rem;">+ Add Color Stop</button>
                 </div>
-            </div>
+            </details>
 
-            <div class="sidebar-section">
-                <h3 class="section-title"><i data-lucide="type" size="14"></i> Text Customization</h3>
-                <div class="control-group">
+            <details class="sidebar-section">
+                <summary class="section-title"><i data-lucide="type" size="14"></i> Text Customization</summary>
+                <div class="section-content">
                     <div class="input-field">
                         <label>Font Family</label>
                         <select id="label-font">
@@ -227,12 +215,39 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </details>
 
-            <div class="sidebar-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                    <h3 class="section-title" style="margin: 0;">State Table</h3>
-                    <div style="display:flex; gap:0.5rem;">
+            <details class="sidebar-section">
+                <summary class="section-title"><i data-lucide="download" size="14"></i> Download Panel</summary>
+                <div class="section-content">
+                    <label>Aspect Ratio Presets</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                            <span style="font-size: 0.65rem; color: var(--text-muted); width: 100%;">Square</span>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="1:1" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">1:1</button>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                            <span style="font-size: 0.65rem; color: var(--text-muted); width: 100%;">Vertical</span>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="9:16" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">9:16</button>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="4:5" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">4:5</button>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="3:4" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">3:4</button>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="2:3" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">2:3</button>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                            <span style="font-size: 0.65rem; color: var(--text-muted); width: 100%;">Horizontal</span>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="16:9" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">16:9</button>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="5:4" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">5:4</button>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="4:3" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">4:3</button>
+                            <button class="btn btn-secondary ratio-btn" data-ratio="3:2" style="padding: 0.2rem 0.4rem; font-size: 0.7rem;">3:2</button>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="sidebar-section">
+                <summary class="section-title" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <span><i data-lucide="layers" size="14"></i> State Table</span>
+                    <div style="display:flex; gap:0.5rem; margin-left: auto;">
                         <button id="undo-btn" class="btn btn-secondary"
                             style="padding: 0.25rem 0.5rem; font-size: 0.65rem;" disabled>
                             <i data-lucide="undo" style="width:12px; height:12px;"></i> Undo
@@ -240,23 +255,27 @@
                         <button id="clear-colors-btn" class="btn btn-secondary"
                             style="padding: 0.25rem 0.5rem; font-size: 0.65rem;">Reset Layout</button>
                     </div>
+                </summary>
+                <div class="section-content" style="padding: 0;">
+                    <div class="data-table-container" style="max-height: 400px; border: none; border-radius: 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th title="Name Size">SzN</th>
+                                    <th title="Name Color">ClN</th>
+                                    <th title="Line Show" style="border-left:1px solid #ddd;">Ln</th>
+                                    <th title="Line Alignment">Al</th>
+                                    <th title="Value" style="border-left:1px solid #ddd;">Val</th>
+                                    <th title="Value Size">SzV</th>
+                                    <th title="Value Color">ClV</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="data-table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th title="Value">Val</th>
-                                <th title="Name Size">SzN</th>
-                                <th title="Name Color">ClN</th>
-                                <th title="Value Size" style="border-left:1px solid #ddd;">SzV</th>
-                                <th title="Value Color">ClV</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body"></tbody>
-                    </table>
-                </div>
-            </div>
+            </details>
         </aside>
 
         <section class="viewer">

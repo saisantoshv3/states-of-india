@@ -1,17 +1,17 @@
 import * as d3 from 'd3';
 import html2canvas from 'html2canvas';
-import { createIcons, MapPin, Download, Settings, Palette, Type, FileText, MousePointer2, Move, Undo } from 'lucide';
+import { createIcons, MapPin, Download, Settings, Palette, Type, FileText, MousePointer2, Move, Undo, RotateCcw, Layers } from 'lucide';
 
 let stateData = [
     { id: "JK", name: "JK", fullName: "Jammu & Kashmir", value: 2.78, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "LA", name: "Ladakh", fullName: "Ladakh", value: 0.03, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "PB", name: "PB", fullName: "Punjab", value: 2.77, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-    { id: "UP", name: "UP", fullName: "Uttar Pradesh", value: 24.11, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "UP", name: "Uttar Pradesh", fullName: "Uttar Pradesh", value: 24.11, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "RJ", name: "Rajasthan", fullName: "Rajasthan", value: 6.85, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "GJ", name: "Gujarat", fullName: "Gujarat", value: 6.04, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "MP", name: "Madhya Pradesh", fullName: "Madhya Pradesh", value: 7.26, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "MH", name: "Maharashtra", fullName: "Maharashtra", value: 11.24, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-    { id: "KA", name: "Karnataka", fullName: "Karnataka", value: 6.11, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "KA", name: "KA", fullName: "Karnataka", value: 6.11, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "KL", name: "Kerala", fullName: "Kerala", value: 3.45, dx: -50, dy: 20, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "TN", name: "TN", fullName: "Tamil Nadu", value: 7.21, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "AP", name: "AP", fullName: "Andhra Pradesh", value: 4.96, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
@@ -41,6 +41,8 @@ let stateData = [
     { id: "CH", name: "Chandigarh", fullName: "Chandigarh", value: null, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 }
 ];
 
+const INITIAL_STATE_DATA = JSON.parse(JSON.stringify(stateData));
+
 const config = {
     scale: 1410,
     colorStops: [
@@ -53,7 +55,9 @@ const config = {
     labelFont: "Times New Roman",
     labelAngle: 0,
     lineColor: "#333",
+    lineAlignment: "middle",
     showValues: true,
+    showLines: true,
     valuePrefix: "",
     valueSuffix: "",
     showLegend: true, legendDirection: "horizontal", legendX: 380, legendY: 650,
@@ -62,12 +66,12 @@ const config = {
     valueBold: true,
     valueItalic: false,
     selectedState: null,
-    titleX: 450,
-    titleY: 20,
-    titleSize: 2.5,
-    mapX: -50,
-    mapY: 10
+    borderThickness: 0.7,
+    borderColor: "#191919",
+    selectedRatio: "1:1"
 };
+
+const INITIAL_CONFIG = JSON.parse(JSON.stringify(config));
 
 const palettes = [
     { name: "Viridis", stops: [{ offset: 0, color: "#440154" }, { offset: 100, color: "#fde725" }] },
@@ -106,13 +110,23 @@ function undoState() {
     const last = stateHistory.pop();
     stateData = last.stateData;
     Object.assign(config, last.config);
+    syncUI();
+    const btn = document.getElementById('undo-btn');
+    if (btn && stateHistory.length === 0) btn.disabled = true;
 
-    const fields = ['title-x', 'title-y', 'map-x', 'map-y', 'legend-x', 'legend-y'];
+    renderTable();
+    renderGradientStops();
+    updateMap();
+}
+
+function syncUI() {
+    const fields = ['legend-x', 'legend-y', 'border-thickness', 'border-color'];
     fields.forEach(f => {
         const el = document.getElementById(f);
         if (el) {
-            const prop = f.replace('-x', 'X').replace('-y', 'Y').replace('title-', 'title').replace('map-', 'map').replace('legend-', 'legend');
+            const prop = f.replace('-x', 'X').replace('-y', 'Y').replace('legend-', 'legend').replace('border-thickness', 'borderThickness').replace('border-color', 'borderColor');
             el.value = config[prop];
+            if (f === 'border-thickness') document.getElementById('border-val').innerText = config.borderThickness;
         }
     });
 
@@ -133,14 +147,20 @@ function undoState() {
     if (vsEl) vsEl.value = config.valueSuffix;
 
     const ms = document.getElementById('map-scale');
-    if (ms) { ms.value = config.scale; document.getElementById('scale-val').innerText = config.scale; }
+    if (ms) { ms.value = config.scale; document.getElementById('scale-val').innerText = Math.round(config.scale); }
 
-    const btn = document.getElementById('undo-btn');
-    if (btn && stateHistory.length === 0) btn.disabled = true;
+    const ls = document.getElementById('label-size');
+    if (ls) { ls.value = config.labelSize; document.getElementById('size-val').innerText = config.labelSize + "px"; }
+    
+    const vsSize = document.getElementById('value-size-global');
+    if (vsSize) { vsSize.value = config.valueSize; document.getElementById('vsize-val').innerText = config.valueSize + "px"; }
+    
+    const la = document.getElementById('label-angle');
+    if (la) { la.value = config.labelAngle; document.getElementById('angle-val').innerText = config.labelAngle + "°"; }
 
-    renderTable();
-    renderGradientStops();
-    updateMap();
+    document.querySelectorAll('.ratio-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.ratio === config.selectedRatio);
+    });
 }
 
 let geoData = null;
@@ -160,7 +180,7 @@ const projection = d3.geoMercator();
 const path = d3.geoPath().projection(projection);
 
 async function init() {
-    createIcons({ icons: { MapPin, Download, Settings, Palette, Type, FileText, MousePointer2, Move, Undo } });
+    createIcons({ icons: { MapPin, Download, Settings, Palette, Type, FileText, MousePointer2, Move, Undo, RotateCcw, Layers } });
     try {
         const response = await fetch('./india_states.json');
         geoData = await response.json();
@@ -171,48 +191,37 @@ async function init() {
             for (const k of nameKeys) if (geoData.features[0].properties[k]) { nameKey = k; break; }
         }
 
+        const normalize = (s) => s ? s.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/and/g, '').replace(/islands?$/, 'island') : '';
+
         geoData.features.forEach(f => {
             const name = f.properties[nameKey];
-            const geoId = f.properties.ID || f.properties.ST_ID?.replace('IN-', '');
-            const cleanName = name ? name.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+            const geoId = (f.properties.ID || f.properties.ST_ID || "").replace('IN-', '');
+            const cleanName = normalize(name);
 
-            // 1. Direct ID match (highest priority from GeoJSON ID)
+            // 1. Direct ID match
             let match = stateData.find(s => s.id === geoId);
 
-            // 2. Exact name match (fallback to full names or display names)
+            // 2. Normalized name match
             if (!match) match = stateData.find(s =>
-                (s.fullName && cleanName === s.fullName.toLowerCase().replace(/[^a-z0-9]/g, '')) ||
-                cleanName === s.name.toLowerCase().replace(/[^a-z0-9]/g, '')
+                (s.fullName && cleanName === normalize(s.fullName)) ||
+                cleanName === normalize(s.name)
             );
 
-            // 3. Special cases for merged UTs or alternative IDs
+            // 3. Special cases
             if (!match) {
                 if (geoId === 'DD' || cleanName.includes('dadara') || cleanName.includes('havelli') || cleanName.includes('daman') || cleanName.includes('diu')) {
                     match = stateData.find(s => s.id === "DN");
                 }
             }
 
-            // 4. Broader fuzzy match
-            if (!match && cleanName.length > 3) {
-                match = stateData.find(s => fuzzyMatch(s.name, name));
-            }
-
-            if (match) f.properties._mapped_id = match.id;
-        });
-
-        // Initialize UI with config values
-        ['label-bold', 'label-italic', 'value-bold', 'value-italic', 'show-legend', 'show-values'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                const prop = id.split('-').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('');
-                el.checked = config[prop];
+            if (match) {
+                f.properties._mapped_id = match.id;
+            } else {
+                console.warn(`Unmapped GeoJSON feature: ${name} (ID: ${geoId})`);
             }
         });
-        const ls = document.getElementById('label-size');
-        if (ls) ls.value = config.labelSize;
-        const vs = document.getElementById('value-size-global');
-        if (vs) vs.value = config.valueSize;
 
+        syncUI();
         renderTable();
         renderGradientStops();
         handleResize();
@@ -273,7 +282,7 @@ function renderLegend() {
     const minVal = d3.min(stateData, d => d.value) || 0;
     const maxVal = d3.max(stateData, d => d.value) || 100;
 
-    const formatNum = (v) => v !== null ? d3.format(",")(v) : "";
+    const formatNum = (v) => v !== null ? new Intl.NumberFormat('en-IN').format(v) : "";
 
     if (config.legendDirection === 'horizontal') {
         svgLegend.append("text").attr("x", 20).attr("y", 15).text(`${config.valuePrefix}${formatNum(minVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
@@ -353,25 +362,15 @@ function updateMap() {
     if (titleHtml.includes('<br>')) titleHtml += '</span>';
 
     titleDisp.html(titleHtml)
-        .style("transform", `translate(${config.titleX}px, ${config.titleY}px)`)
-        .style("font-size", `${config.titleSize}rem`)
-        .style("cursor", "move")
-        .style("pointer-events", "all")
-        .call(d3.drag().on("start", () => saveState()).on("drag", function (event) {
-            config.titleX += event.dx;
-            config.titleY += event.dy;
-            const txEl = document.getElementById('title-x');
-            const tyEl = document.getElementById('title-y');
-            if (txEl) txEl.value = Math.round(config.titleX);
-            if (tyEl) tyEl.value = Math.round(config.titleY);
-            updateMap();
-        }));
+        .style("transform", `translate(450px, 20px)`)
+        .style("font-size", `2.5rem`)
+        .style("cursor", "default")
+        .style("pointer-events", "none");
 
-    gMap.attr("transform", `translate(${config.mapX}, ${config.mapY})`);
+    gMap.attr("transform", `translate(-50, 10)`);
 
     const states = gStates.selectAll(".state-path").data(geoData.features);
     states.enter().append("path").attr("class", "state-path")
-        .attr("stroke", "#000").attr("stroke-width", 1.0)
         .on("click", (event, d) => {
             const data = stateData.find(s => s.id === d.properties._mapped_id);
             if (data) {
@@ -380,10 +379,13 @@ function updateMap() {
                 updateMap();
             }
         })
-        .merge(states).transition().duration(200).attr("d", path)
+        .merge(states)
+        .style("stroke", config.borderColor)
+        .style("stroke-width", config.borderThickness + "px")
+        .transition().duration(200).attr("d", path)
         .attr("fill", d => {
             const data = stateData.find(s => s.id === d.properties._mapped_id);
-            if (!data || data.value === null) return "#f1f5f9"; // Default "no data" color
+            if (!data || data.value === null) return "#edeeed"; // Instagram-style neutral grey
             return colorScale(data.value);
         });
 
@@ -415,10 +417,16 @@ function renderLabels() {
                 if (len > maxPathLen) { maxPathLen = len; bestFeature = f; }
             });
 
+            // Use path.centroid for initial middle position
             const centroid = path.centroid(bestFeature);
             if (!isNaN(centroid[0])) {
                 data.origX = centroid[0];
                 data.origY = centroid[1];
+                
+                // Fine-tune centering for small/curved states to avoid borders
+                if (data.id === "DL") { data.origX += 2; } // Delhi
+                if (data.id === "PY") { data.origX += 5; } // Puducherry
+                
                 data.x = data.origX + (data.dx || 0);
                 data.y = data.origY + (data.dy || 0);
             }
@@ -430,11 +438,37 @@ function renderLabels() {
         .attr("stroke", config.lineColor)
         .attr("fill", "none")
         .attr("stroke-dasharray", "2,2")
-        .attr("d", d => {
-            if (d.value === null || !d.dx || (Math.abs(d.dx) < 15 && Math.abs(d.dy) < 15)) return "";
+        .attr("d", function(d) {
+            const show = d.showLine !== undefined ? d.showLine : config.showLines;
+            if (!show || d.value === null || !d.dx || (Math.abs(d.dx) < 15 && Math.abs(d.dy) < 15)) return "";
+            
+            const targetX = d.x;
+            const targetY = d.y;
+            
+            // Adjust connection point based on lineAlignment (per-state or global)
+            const align = d.lineAlign || config.lineAlignment;
+            let sourceX = targetX;
+            
+            // Try to measure the actual text if rendered
+            const labelGroup = d3.select(this.parentNode.parentNode).select(".labels-group");
+            const labelNode = labelGroup.selectAll(".label-group")
+                .filter(ld => ld.id === d.id)
+                .select(".label-name").node();
+            
+            let textWidth = (d.name.length * (d.size || config.labelSize) * 0.5);
+            if (labelNode && typeof labelNode.getComputedTextLength === 'function') {
+                try { textWidth = labelNode.getComputedTextLength(); } catch(e) {}
+            }
+
+            if (align === 'start') {
+                sourceX -= textWidth / 2;
+            } else if (align === 'end') {
+                sourceX += textWidth / 2;
+            }
+
             const cx = d.origX + (d.cdx || 0);
             const cy = d.y + (d.cdy || 0);
-            return `M${d.x},${d.y} Q${cx},${cy} ${d.origX},${d.origY}`;
+            return `M${sourceX},${targetY} Q${cx},${cy} ${d.origX},${d.origY}`;
         });
     lines.exit().remove();
 
@@ -472,8 +506,10 @@ function renderLabels() {
         .attr("text-anchor", "middle")
         .on("click", (e, d) => { e.stopPropagation(); config.selectedState = d.id; updateMap(); });
 
+    const formatIndian = new Intl.NumberFormat('en-IN').format;
+
     labelsMerge.select(".label-value")
-        .text(d => (config.showValues && d.value !== null) ? `${config.valuePrefix}${d3.format(",")(d.value)}${config.valueSuffix}` : "")
+        .text(d => (config.showValues && d.value !== null) ? `${config.valuePrefix}${formatIndian(d.value)}${config.valueSuffix}` : "")
         .attr("font-size", d => d.vSize || config.valueSize)
         .attr("fill", d => d.valueColor || d.labelColor || config.labelColor)
         .attr("font-family", config.labelFont)
@@ -546,26 +582,7 @@ function setupEventListeners() {
         }, { passive: false });
     }
 
-    // Panning Map Graphic
-    svg.call(d3.drag().subject(function () { return { x: config.mapX, y: config.mapY }; })
-        .on("start", () => saveState())
-        .on("drag", (event) => {
-            const container = document.getElementById('map-container');
-            if (container) {
-                const rect = container.getBoundingClientRect();
-                width = rect.width;
-                height = rect.height;
-                svg.attr("width", width).attr("height", height);
-            }
-            config.mapX = event.x;
-            config.mapY = event.y;
-            const mxEl = document.getElementById('map-x');
-            const myEl = document.getElementById('map-y');
-            if (mxEl) mxEl.value = Math.round(config.mapX);
-            if (myEl) myEl.value = Math.round(config.mapY);
-            updateMap();
-        })
-    );
+    // Panning Map Graphic removed as per request
 
     svg.on("click", (e) => {
         if (e.defaultPrevented) return;
@@ -580,7 +597,45 @@ function setupEventListeners() {
     }
 
     const undoBtn = document.getElementById('undo-btn');
-    if (undoBtn) undoBtn.addEventListener('click', undoState);
+    if (undoBtn) {
+        undoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            undoState();
+        });
+    }
+
+    const resetAllBtn = document.getElementById('reset-all-btn');
+    if (resetAllBtn) {
+        resetAllBtn.addEventListener('click', () => {
+            if (confirm("Reset all settings and data to default?")) {
+                saveState();
+                stateData = JSON.parse(JSON.stringify(INITIAL_STATE_DATA));
+                Object.assign(config, JSON.parse(JSON.stringify(INITIAL_CONFIG)));
+                syncUI();
+                renderTable();
+                renderGradientStops();
+                updateMap();
+            }
+        });
+    }
+
+    const resetLayoutBtn = document.getElementById('clear-colors-btn');
+    if (resetLayoutBtn) {
+        resetLayoutBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            stateData.forEach(s => { 
+                s.dx = 0; s.dy = 0; s.angle = 0; s.vdx = 0; s.vdy = 15; s.cdx = 0; s.cdy = 0; 
+                s.labelColor = null; s.valueColor = null; s.size = 12; s.vSize = 15;
+                s.showLine = undefined; s.lineAlign = null;
+            });
+            config.scale = 1410;
+            
+            syncUI();
+            renderTable(); 
+            renderGradientStops();
+            updateMap();
+        });
+    }
 
     const legDir = document.getElementById('legend-direction');
     if (legDir) legDir.addEventListener('change', e => { saveState(); config.legendDirection = e.target.value; updateMap(); });
@@ -591,20 +646,25 @@ function setupEventListeners() {
     const legY = document.getElementById('legend-y');
     if (legY) legY.addEventListener('input', e => { config.legendY = parseFloat(e.target.value); updateMap(); });
 
-    ['title-x', 'title-y', 'title-size', 'map-x', 'map-y'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', e => {
-            const key = id.replace('title-', 'title').replace('map-', 'map').replace('-size', 'Size').replace('-x', 'X').replace('-y', 'Y');
-            config[key] = parseFloat(e.target.value);
-            updateMap();
-        });
-    });
-
     const mapScaleEl = document.getElementById('map-scale');
     if (mapScaleEl) mapScaleEl.addEventListener('input', e => {
         config.scale = parseInt(e.target.value);
         const sv = document.getElementById('scale-val');
-        if (sv) sv.innerText = config.scale;
+        if (sv) sv.innerText = Math.round(config.scale);
+        updateMap();
+    });
+
+    const borderColorEl = document.getElementById('border-color');
+    if (borderColorEl) borderColorEl.addEventListener('input', e => {
+        config.borderColor = e.target.value;
+        updateMap();
+    });
+
+    const borderThicknessEl = document.getElementById('border-thickness');
+    if (borderThicknessEl) borderThicknessEl.addEventListener('input', e => {
+        config.borderThickness = parseFloat(e.target.value);
+        const sv = document.getElementById('border-val');
+        if (sv) sv.innerText = config.borderThickness;
         updateMap();
     });
 
@@ -721,6 +781,13 @@ function setupEventListeners() {
         config.valueSuffix = e.target.value; updateMap();
     });
 
+    document.querySelectorAll('.ratio-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            config.selectedRatio = btn.dataset.ratio;
+            syncUI();
+        });
+    });
+
     const downloadBtn = document.getElementById('download-btn');
     if (downloadBtn) downloadBtn.addEventListener('click', () => {
         const area = document.getElementById('map-export-area');
@@ -732,15 +799,19 @@ function setupEventListeners() {
             .replace(/^_|_$/g, '');
         const fileName = (snakeName || "india_map") + ".png";
 
-        // Save current view
+        // Save current state
         const oldScale = config.scale;
-        const oldMapX = config.mapX;
-        const oldMapY = config.mapY;
+        const oldWidth = area.style.width;
+        const oldHeight = area.style.height;
+
+        // Apply aspect ratio for download
+        const [rw, rh] = config.selectedRatio.split(':').map(Number);
+        const baseSize = 1000;
+        area.style.width = `${baseSize}px`;
+        area.style.height = `${(baseSize * rh) / rw}px`;
 
         // Reset to default baseline for export
         config.scale = 1410;
-        config.mapX = -50;
-        config.mapY = 10;
         
         gHandles.style("visibility", "hidden");
         updateMap();
@@ -758,55 +829,22 @@ function setupEventListeners() {
                 link.href = canvas.toDataURL("image/png");
                 link.click();
                 
-                // Restore view
+                // Restore state
+                area.style.width = oldWidth;
+                area.style.height = oldHeight;
                 config.scale = oldScale;
-                config.mapX = oldMapX;
-                config.mapY = oldMapY;
                 gHandles.style("visibility", "visible");
                 updateMap();
             }).catch(err => {
                 console.error("Export failed:", err);
+                area.style.width = oldWidth;
+                area.style.height = oldHeight;
                 config.scale = oldScale;
-                config.mapX = oldMapX;
-                config.mapY = oldMapY;
                 gHandles.style("visibility", "visible");
                 updateMap();
                 alert("Export failed. Please try again.");
             });
         }, 100);
-    });
-
-    const resetBtn = document.getElementById('clear-colors-btn');
-    if (resetBtn) resetBtn.addEventListener('click', () => {
-        stateData.forEach(s => { s.dx = 0; s.dy = 0; s.angle = 0; s.vdx = 0; s.vdy = 15; s.cdx = 0; s.cdy = -20; s.labelColor = null; s.valueColor = null; s.size = 12; s.vSize = 15; });
-        config.mapX = -50; config.mapY = 10; config.titleX = 450; config.titleY = 20;
-        config.scale = 1410;
-        config.labelSize = 12; config.valueSize = 15;
-        config.labelBold = false; config.labelItalic = false;
-        config.valueBold = true; config.valueItalic = false;
-        config.valuePrefix = ""; config.valueSuffix = "";
-        config.colorStops = [{ offset: 0, color: "#7ad4b1ff" }, { offset: 100, color: "#177a73ff" }];
-        
-        document.getElementById('map-x').value = -50; document.getElementById('map-y').value = 10;
-        document.getElementById('title-x').value = 450; document.getElementById('title-y').value = 20;
-        document.getElementById('label-size').value = 12;
-        document.getElementById('value-size-global').value = 15;
-        document.getElementById('size-val').innerText = "12px";
-        document.getElementById('vsize-val').innerText = "15px";
-        document.getElementById('value-prefix').value = "";
-        document.getElementById('value-suffix').value = "";
-        
-        ['label-bold', 'label-italic', 'value-bold', 'value-italic'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                const prop = id.split('-').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('');
-                el.checked = config[prop];
-            }
-        });
-        
-        renderTable(); 
-        renderGradientStops();
-        updateMap();
     });
 
     const csvUpload = document.getElementById('csv-upload');
@@ -824,22 +862,28 @@ function setupEventListeners() {
                 // Reset all values to null before applying CSV data
                 stateData.forEach(s => s.value = null);
 
+                const normalize = (s) => s ? s.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/and/g, '').replace(/islands?$/, 'island') : '';
+
                 rows.slice(startIdx).forEach(row => {
                     const cols = row.split(',');
                     if (cols.length >= 2) {
                         const rowName = cols[0].trim();
                         const val = parseFloat(cols[1]);
                         if (!isNaN(val)) {
-                            const cleanRowName = rowName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                            const cleanRowName = normalize(rowName);
                             
-                            // Try exact match first
-                            let state = stateData.find(s =>
-                                s.id.toLowerCase() === cleanRowName ||
-                                (s.fullName && s.fullName.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanRowName) ||
-                                s.name.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanRowName
-                            );
+                            // Try exact ID match first
+                            let state = stateData.find(s => s.id.toLowerCase() === cleanRowName);
 
-                            // Fallback to fuzzy match if no exact match found
+                            // Then match by normalized full name or display name
+                            if (!state) {
+                                state = stateData.find(s =>
+                                    (s.fullName && normalize(s.fullName) === cleanRowName) ||
+                                    normalize(s.name) === cleanRowName
+                                );
+                            }
+
+                            // Fallback to fuzzy match if still no match
                             if (!state) {
                                 state = stateData.find(s =>
                                     (s.fullName && fuzzyMatch(s.fullName, rowName)) ||
@@ -879,11 +923,23 @@ function renderTable() {
     [...stateData].sort((a, b) => a.id.localeCompare(b.id)).forEach((state) => {
         const actualIdx = stateData.findIndex(s => s.id === state.id);
         const tr = document.createElement('tr');
+        
+        const showLine = state.showLine !== undefined ? state.showLine : config.showLines;
+        const lineAlign = state.lineAlign || config.lineAlignment;
+
         tr.innerHTML = `
             <td><input type="text" value="${state.name}" class="ti-name" data-idx="${actualIdx}"></td>
-            <td><input type="number" value="${state.value}" class="ti-val" data-idx="${actualIdx}"></td>
             <td><input type="number" value="${state.size || config.labelSize}" class="ti-size" data-idx="${actualIdx}"></td>
             <td><input type="color" value="${state.labelColor || config.labelColor}" class="ti-color" data-idx="${actualIdx}"></td>
+            <td style="border-left:1px solid #ddd; text-align: center;"><input type="checkbox" ${showLine ? 'checked' : ''} class="ti-showline" data-idx="${actualIdx}"></td>
+            <td>
+                <select class="ti-linealign" data-idx="${actualIdx}" style="font-size: 0.65rem; padding: 0.1rem;">
+                    <option value="middle" ${lineAlign === 'middle' ? 'selected' : ''}>Mid</option>
+                    <option value="start" ${lineAlign === 'start' ? 'selected' : ''}>Start</option>
+                    <option value="end" ${lineAlign === 'end' ? 'selected' : ''}>End</option>
+                </select>
+            </td>
+            <td style="border-left:1px solid #ddd;"><input type="number" value="${state.value}" class="ti-val" data-idx="${actualIdx}"></td>
             <td><input type="number" value="${state.vSize || config.valueSize}" class="ti-vsize" data-idx="${actualIdx}"></td>
             <td><input type="color" value="${state.valueColor || state.labelColor || config.labelColor}" class="ti-vcolor" data-idx="${actualIdx}"></td>
         `;
@@ -907,6 +963,12 @@ function renderTable() {
     }));
     tbody.querySelectorAll('.ti-vcolor').forEach(el => el.addEventListener('input', e => {
         stateData[e.target.dataset.idx].valueColor = e.target.value; updateMap();
+    }));
+    tbody.querySelectorAll('.ti-showline').forEach(el => el.addEventListener('change', e => {
+        stateData[e.target.dataset.idx].showLine = e.target.checked; renderLabels();
+    }));
+    tbody.querySelectorAll('.ti-linealign').forEach(el => el.addEventListener('change', e => {
+        stateData[e.target.dataset.idx].lineAlign = e.target.value; renderLabels();
     }));
 }
 

@@ -76,6 +76,13 @@
                             <span id="scale-val">1200</span>
                         </div>
                     </div>
+                    <div class="input-field">
+                        <label>Border Thickness</label>
+                        <div class="range-input">
+                            <input type="range" id="border-thickness" min="0.1" max="5" step="0.1" value="1.2">
+                            <span id="border-val">1.2</span>
+                        </div>
+                    </div>
                     <div class="input-field" style="display:none;">
                         <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
                             <input type="checkbox" id="show-legend-old"> Show Scale Bar
@@ -167,28 +174,61 @@
                             <input type="color" id="line-color" value="#94a3b8">
                         </div>
                     </div>
-                    <div class="input-field" style="flex-direction: row; gap: 1rem;">
-                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
-                            <input type="checkbox" id="bold-labels" checked> Bold
-                        </label>
-                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
-                            <input type="checkbox" id="show-values" checked> Values
-                        </label>
-                    </div>
-                    <div class="input-field">
-                        <label>State Font Size</label>
-                        <div class="range-input">
-                            <input type="range" id="label-size" min="6" max="30" value="11">
-                            <span id="size-val">11px</span>
+                    
+                    <div style="background: #e2e8f055; padding: 0.5rem; border-radius: 6px;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block;">State Name Styling</label>
+                        <div class="input-field" style="flex-direction: row; gap: 1rem; align-items: center;">
+                            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size: 0.75rem;">
+                                <input type="checkbox" id="label-bold"> Bold
+                            </label>
+                            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size: 0.75rem;">
+                                <input type="checkbox" id="label-italic"> Italic
+                            </label>
+                            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size: 0.75rem;">
+                                <input type="checkbox" id="show-lines" checked> Leader Lines
+                            </label>
+                        </div>
+                        <div class="input-field" style="margin-top: 0.5rem;">
+                            <label style="font-size: 0.75rem;">Font Size</label>
+                            <div class="range-input">
+                                <input type="range" id="label-size" min="6" max="30" value="12">
+                                <span id="size-val">12px</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="input-field">
-                        <label>Value Font Size</label>
-                        <div class="range-input">
-                            <input type="range" id="value-size-global" min="6" max="30" value="10">
-                            <span id="vsize-val">10px</span>
+
+                    <div style="background: #e2e8f055; padding: 0.5rem; border-radius: 6px; margin-top: 0.5rem;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block;">Value Label Styling</label>
+                        <div class="input-field" style="flex-direction: row; gap: 1rem; align-items: center;">
+                            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size: 0.75rem;">
+                                <input type="checkbox" id="value-bold" checked> Bold
+                            </label>
+                            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size: 0.75rem;">
+                                <input type="checkbox" id="value-italic"> Italic
+                            </label>
+                            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size: 0.75rem; margin-left: auto;">
+                                <input type="checkbox" id="show-values" checked> Show
+                            </label>
+                        </div>
+                        <div class="input-field" style="margin-top: 0.5rem;">
+                            <label style="font-size: 0.75rem;">Font Size</label>
+                            <div class="range-input">
+                                <input type="range" id="value-size-global" min="6" max="30" value="15">
+                                <span id="vsize-val">15px</span>
+                            </div>
+                        </div>
+                        <div class="color-pickers" style="margin-top: 0.5rem;">
+                            <div class="input-field">
+                                <label style="font-size: 0.75rem;">Value Prefix</label>
+                                <input type="text" id="value-prefix" placeholder="e.g. $" style="font-size: 0.75rem; padding: 0.2rem;">
+                            </div>
+                            <div class="input-field">
+                                <label style="font-size: 0.75rem;">Value Suffix</label>
+                                <input type="text" id="value-suffix" placeholder="e.g. %" style="font-size: 0.75rem; padding: 0.2rem;">
+                            </div>
                         </div>
                     </div>
+
                     <div class="input-field">
                         <label>Label Angle</label>
                         <div class="range-input">

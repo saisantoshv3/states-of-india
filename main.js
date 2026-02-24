@@ -54,6 +54,7 @@ const config = {
     labelAngle: 0,
     lineColor: "#333",
     showValues: true,
+    showLines: true,
     valuePrefix: "",
     valueSuffix: "",
     showLegend: true, legendDirection: "horizontal", legendX: 380, legendY: 650,
@@ -66,7 +67,8 @@ const config = {
     titleY: 20,
     titleSize: 2.5,
     mapX: -50,
-    mapY: 10
+    mapY: 10,
+    borderThickness: 1.2
 };
 
 const palettes = [
@@ -107,16 +109,17 @@ function undoState() {
     stateData = last.stateData;
     Object.assign(config, last.config);
 
-    const fields = ['title-x', 'title-y', 'map-x', 'map-y', 'legend-x', 'legend-y'];
+    const fields = ['title-x', 'title-y', 'map-x', 'map-y', 'legend-x', 'legend-y', 'border-thickness'];
     fields.forEach(f => {
         const el = document.getElementById(f);
         if (el) {
-            const prop = f.replace('-x', 'X').replace('-y', 'Y').replace('title-', 'title').replace('map-', 'map').replace('legend-', 'legend');
+            const prop = f.replace('-x', 'X').replace('-y', 'Y').replace('title-', 'title').replace('map-', 'map').replace('legend-', 'legend').replace('border-thickness', 'borderThickness');
             el.value = config[prop];
+            if (f === 'border-thickness') document.getElementById('border-val').innerText = config.borderThickness;
         }
     });
 
-    ['label-bold', 'label-italic', 'value-bold', 'value-italic', 'show-legend', 'show-values'].forEach(id => {
+    ['label-bold', 'label-italic', 'value-bold', 'value-italic', 'show-legend', 'show-values', 'show-lines'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             const prop = id.split('-').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('');
@@ -171,37 +174,38 @@ async function init() {
             for (const k of nameKeys) if (geoData.features[0].properties[k]) { nameKey = k; break; }
         }
 
+        const normalize = (s) => s ? s.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/and/g, '').replace(/islands?$/, 'island') : '';
+
         geoData.features.forEach(f => {
             const name = f.properties[nameKey];
-            const geoId = f.properties.ID || f.properties.ST_ID?.replace('IN-', '');
-            const cleanName = name ? name.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+            const geoId = (f.properties.ID || f.properties.ST_ID || "").replace('IN-', '');
+            const cleanName = normalize(name);
 
-            // 1. Direct ID match (highest priority from GeoJSON ID)
+            // 1. Direct ID match
             let match = stateData.find(s => s.id === geoId);
 
-            // 2. Exact name match (fallback to full names or display names)
+            // 2. Normalized name match
             if (!match) match = stateData.find(s =>
-                (s.fullName && cleanName === s.fullName.toLowerCase().replace(/[^a-z0-9]/g, '')) ||
-                cleanName === s.name.toLowerCase().replace(/[^a-z0-9]/g, '')
+                (s.fullName && cleanName === normalize(s.fullName)) ||
+                cleanName === normalize(s.name)
             );
 
-            // 3. Special cases for merged UTs or alternative IDs
+            // 3. Special cases
             if (!match) {
                 if (geoId === 'DD' || cleanName.includes('dadara') || cleanName.includes('havelli') || cleanName.includes('daman') || cleanName.includes('diu')) {
                     match = stateData.find(s => s.id === "DN");
                 }
             }
 
-            // 4. Broader fuzzy match
-            if (!match && cleanName.length > 3) {
-                match = stateData.find(s => fuzzyMatch(s.name, name));
+            if (match) {
+                f.properties._mapped_id = match.id;
+            } else {
+                console.warn(`Unmapped GeoJSON feature: ${name} (ID: ${geoId})`);
             }
-
-            if (match) f.properties._mapped_id = match.id;
         });
 
         // Initialize UI with config values
-        ['label-bold', 'label-italic', 'value-bold', 'value-italic', 'show-legend', 'show-values'].forEach(id => {
+        ['label-bold', 'label-italic', 'value-bold', 'value-italic', 'show-legend', 'show-values', 'show-lines'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 const prop = id.split('-').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('');
@@ -273,7 +277,7 @@ function renderLegend() {
     const minVal = d3.min(stateData, d => d.value) || 0;
     const maxVal = d3.max(stateData, d => d.value) || 100;
 
-    const formatNum = (v) => v !== null ? d3.format(",")(v) : "";
+    const formatNum = (v) => v !== null ? new Intl.NumberFormat('en-IN').format(v) : "";
 
     if (config.legendDirection === 'horizontal') {
         svgLegend.append("text").attr("x", 20).attr("y", 15).text(`${config.valuePrefix}${formatNum(minVal)}${config.valueSuffix}`).style("font-size", "10px").style("font-family", config.labelFont);
@@ -371,7 +375,7 @@ function updateMap() {
 
     const states = gStates.selectAll(".state-path").data(geoData.features);
     states.enter().append("path").attr("class", "state-path")
-        .attr("stroke", "#000").attr("stroke-width", 1.0)
+        .style("stroke", "#000").style("stroke-width", config.borderThickness + "px")
         .on("click", (event, d) => {
             const data = stateData.find(s => s.id === d.properties._mapped_id);
             if (data) {
@@ -380,7 +384,10 @@ function updateMap() {
                 updateMap();
             }
         })
-        .merge(states).transition().duration(200).attr("d", path)
+        .merge(states)
+        .style("stroke", "#000")
+        .style("stroke-width", config.borderThickness + "px")
+        .transition().duration(200).attr("d", path)
         .attr("fill", d => {
             const data = stateData.find(s => s.id === d.properties._mapped_id);
             if (!data || data.value === null) return "#f1f5f9"; // Default "no data" color
@@ -431,7 +438,7 @@ function renderLabels() {
         .attr("fill", "none")
         .attr("stroke-dasharray", "2,2")
         .attr("d", d => {
-            if (d.value === null || !d.dx || (Math.abs(d.dx) < 15 && Math.abs(d.dy) < 15)) return "";
+            if (!config.showLines || d.value === null || !d.dx || (Math.abs(d.dx) < 15 && Math.abs(d.dy) < 15)) return "";
             const cx = d.origX + (d.cdx || 0);
             const cy = d.y + (d.cdy || 0);
             return `M${d.x},${d.y} Q${cx},${cy} ${d.origX},${d.origY}`;
@@ -472,8 +479,10 @@ function renderLabels() {
         .attr("text-anchor", "middle")
         .on("click", (e, d) => { e.stopPropagation(); config.selectedState = d.id; updateMap(); });
 
+    const formatIndian = new Intl.NumberFormat('en-IN').format;
+
     labelsMerge.select(".label-value")
-        .text(d => (config.showValues && d.value !== null) ? `${config.valuePrefix}${d3.format(",")(d.value)}${config.valueSuffix}` : "")
+        .text(d => (config.showValues && d.value !== null) ? `${config.valuePrefix}${formatIndian(d.value)}${config.valueSuffix}` : "")
         .attr("font-size", d => d.vSize || config.valueSize)
         .attr("fill", d => d.valueColor || d.labelColor || config.labelColor)
         .attr("font-family", config.labelFont)
@@ -583,7 +592,7 @@ function setupEventListeners() {
     if (undoBtn) undoBtn.addEventListener('click', undoState);
 
     const legDir = document.getElementById('legend-direction');
-    if (lgDir) lgDir.addEventListener('change', e => { saveState(); config.legendDirection = e.target.value; updateMap(); });
+    if (legDir) legDir.addEventListener('change', e => { saveState(); config.legendDirection = e.target.value; updateMap(); });
 
     const legX = document.getElementById('legend-x');
     if (legX) legX.addEventListener('input', e => { config.legendX = parseFloat(e.target.value); updateMap(); });
@@ -605,6 +614,14 @@ function setupEventListeners() {
         config.scale = parseInt(e.target.value);
         const sv = document.getElementById('scale-val');
         if (sv) sv.innerText = config.scale;
+        updateMap();
+    });
+
+    const borderThicknessEl = document.getElementById('border-thickness');
+    if (borderThicknessEl) borderThicknessEl.addEventListener('input', e => {
+        config.borderThickness = parseFloat(e.target.value);
+        const sv = document.getElementById('border-val');
+        if (sv) sv.innerText = config.borderThickness;
         updateMap();
     });
 
@@ -711,6 +728,11 @@ function setupEventListeners() {
         config.showValues = e.target.checked; updateMap();
     });
 
+    const showLinesEl = document.getElementById('show-lines');
+    if (showLinesEl) showLinesEl.addEventListener('change', e => {
+        config.showLines = e.target.checked; renderLabels();
+    });
+
     const valPrefixEl = document.getElementById('value-prefix');
     if (valPrefixEl) valPrefixEl.addEventListener('input', e => {
         config.valuePrefix = e.target.value; updateMap();
@@ -781,9 +803,11 @@ function setupEventListeners() {
         stateData.forEach(s => { s.dx = 0; s.dy = 0; s.angle = 0; s.vdx = 0; s.vdy = 15; s.cdx = 0; s.cdy = -20; s.labelColor = null; s.valueColor = null; s.size = 12; s.vSize = 15; });
         config.mapX = -50; config.mapY = 10; config.titleX = 450; config.titleY = 20;
         config.scale = 1410;
+        config.borderThickness = 1.2;
         config.labelSize = 12; config.valueSize = 15;
         config.labelBold = false; config.labelItalic = false;
         config.valueBold = true; config.valueItalic = false;
+        config.showLines = true;
         config.valuePrefix = ""; config.valueSuffix = "";
         config.colorStops = [{ offset: 0, color: "#7ad4b1ff" }, { offset: 100, color: "#177a73ff" }];
         
@@ -795,6 +819,8 @@ function setupEventListeners() {
         document.getElementById('vsize-val').innerText = "15px";
         document.getElementById('value-prefix').value = "";
         document.getElementById('value-suffix').value = "";
+        document.getElementById('border-thickness').value = 1.2;
+        document.getElementById('border-val').innerText = "1.2";
         
         ['label-bold', 'label-italic', 'value-bold', 'value-italic'].forEach(id => {
             const el = document.getElementById(id);
@@ -824,22 +850,28 @@ function setupEventListeners() {
                 // Reset all values to null before applying CSV data
                 stateData.forEach(s => s.value = null);
 
+                const normalize = (s) => s ? s.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/and/g, '').replace(/islands?$/, 'island') : '';
+
                 rows.slice(startIdx).forEach(row => {
                     const cols = row.split(',');
                     if (cols.length >= 2) {
                         const rowName = cols[0].trim();
                         const val = parseFloat(cols[1]);
                         if (!isNaN(val)) {
-                            const cleanRowName = rowName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                            const cleanRowName = normalize(rowName);
                             
-                            // Try exact match first
-                            let state = stateData.find(s =>
-                                s.id.toLowerCase() === cleanRowName ||
-                                (s.fullName && s.fullName.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanRowName) ||
-                                s.name.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanRowName
-                            );
+                            // Try exact ID match first
+                            let state = stateData.find(s => s.id.toLowerCase() === cleanRowName);
 
-                            // Fallback to fuzzy match if no exact match found
+                            // Then match by normalized full name or display name
+                            if (!state) {
+                                state = stateData.find(s =>
+                                    (s.fullName && normalize(s.fullName) === cleanRowName) ||
+                                    normalize(s.name) === cleanRowName
+                                );
+                            }
+
+                            // Fallback to fuzzy match if still no match
                             if (!state) {
                                 state = stateData.find(s =>
                                     (s.fullName && fuzzyMatch(s.fullName, rowName)) ||
