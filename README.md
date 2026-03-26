@@ -124,8 +124,8 @@ This runs `vite build` and pushes the `dist/` folder to the `gh-pages` branch au
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source
 
 ---
 
-*Made with ❤️ by [saisantoshv3](https://github.com/saisantoshv3)*
+*by [saisantoshv3](https://github.com/saisantoshv3)*
