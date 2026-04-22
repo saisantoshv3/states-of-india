@@ -36,7 +36,7 @@ let stateData = [
     { id: "DN", name: "DNH & DD", fullName: "Dadra and Nagar Haveli and Daman and Diu", value: 3.5, dx: -40, dy: 20, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "PY", name: "Puducherry", fullName: "Puducherry", value: 0.14, dx: 50, dy: -30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "GA", name: "Goa", fullName: "Goa", value: 0.15, dx: -30, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
-    { id: "AN", name: "Andaman & Nicobar Islands", fullName: "Andaman & Nicobar Island", value: 0.42, dx: 0, dy: -30, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
+    { id: "AN", name: "A & N Islands", fullName: "Andaman & Nicobar", value: 0.42, dx: 20, dy: -10, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "LD", name: "Lakshadweep", fullName: "Lakshadweep", value: 0.01, dx: -30, dy: -10, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 },
     { id: "CH", name: "Chandigarh", fullName: "Chandigarh", value: null, dx: 0, dy: 0, vdx: 0, vdy: 15, angle: 0, size: null, vSize: null, labelColor: null, valueColor: null, cdx: 0, cdy: 0 }
 ];
@@ -168,7 +168,7 @@ async function init() {
         const response = await fetch('./india_states.json');
         geoData = await response.json();
 
-        const nameKeys = ["ST_NM", "NAME_1", "state_name", "NAME"];
+        const nameKeys = ["ST_NM", "NAME_1", "state_name", "NAME", "name"];
         let nameKey = "ST_NM";
         if (geoData.features[0]) {
             for (const k of nameKeys) if (geoData.features[0].properties[k]) { nameKey = k; break; }
